@@ -1,0 +1,173 @@
+2025-03-22 22:53:52.70
+08f82221
+User
+at _callee$ (/home/runner/workspace/node_modules/psn-api/dist/psn-api.cjs.development.js:462:17)
+2025-03-22 22:53:52.70
+08f82221
+User
+at tryCatch (/home/runner/workspace/node_modules/psn-api/dist/psn-api.cjs.development.js:52:17)
+2025-03-22 22:53:52.70
+08f82221
+User
+at Generator. (/home/runner/workspace/node_modules/psn-api/dist/psn-api.cjs.development.js:133:22)
+2025-03-22 22:53:52.70
+08f82221
+User
+at Generator.next (/home/runner/workspace/node_modules/psn-api/dist/psn-api.cjs.development.js:77:21)
+2025-03-22 22:53:52.70
+08f82221
+User
+at asyncGeneratorStep (/home/runner/workspace/node_modules/psn-api/dist/psn-api.cjs.development.js:314:24)
+2025-03-22 22:53:52.70
+08f82221
+User
+at _next (/home/runner/workspace/node_modules/psn-api/dist/psn-api.cjs.development.js:333:9)
+2025-03-22 22:53:52.70
+08f82221
+User
+at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-03-22 22:53:52.85
+08f82221
+User
+Error in getTrophyData: Error:
+2025-03-22 22:53:52.85
+08f82221
+User
+There was a problem retrieving your PSN access code. Is your NPSSO code valid?
+2025-03-22 22:53:52.85
+08f82221
+User
+To get a new NPSSO code, visit https://ca.account.sony.com/api/v1/ssocookie.
+2025-03-22 22:53:52.85
+08f82221
+User
+2025-03-22 22:53:52.85
+08f82221
+User
+at _callee$ (/home/runner/workspace/node_modules/psn-api/dist/psn-api.cjs.development.js:462:17)
+2025-03-22 22:53:52.85
+08f82221
+User
+at tryCatch (/home/runner/workspace/node_modules/psn-api/dist/psn-api.cjs.development.js:52:17)
+2025-03-22 22:53:52.85
+08f82221
+User
+at Generator. (/home/runner/workspace/node_modules/psn-api/dist/psn-api.cjs.development.js:133:22)
+2025-03-22 22:53:52.85
+08f82221
+User
+at Generator.next (/home/runner/workspace/node_modules/psn-api/dist/psn-api.cjs.development.js:77:21)
+2025-03-22 22:53:52.85
+08f82221
+User
+at asyncGeneratorStep (/home/runner/workspace/node_modules/psn-api/dist/psn-api.cjs.development.js:314:24)
+2025-03-22 22:53:52.85
+08f82221
+User
+at _next (/home/runner/workspace/node_modules/psn-api/dist/psn-api.cjs.development.js:333:9)
+2025-03-22 22:53:52.85
+08f82221
+User
+at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-03-22 22:54:13.50
+08f82221
+User
+[Deployment] Error in getTitleData: {
+2025-03-22 22:54:13.50
+08f82221
+User
+message: '\n' +
+2025-03-22 22:54:13.50
+08f82221
+User
+' There was a problem retrieving your PSN access code. Is your NPSSO code valid?\n' +
+2025-03-22 22:54:13.50
+08f82221
+User
+' To get a new NPSSO code, visit https://ca.account.sony.com/api/v1/ssocookie.\n' +
+2025-03-22 22:54:13.50
+08f82221
+User
+' ',
+2025-03-22 22:54:13.50
+08f82221
+User
+type: 'Error',
+2025-03-22 22:54:13.50
+08f82221
+User
+timestamp: '2025-03-23T03:54:13.504Z',
+2025-03-22 22:54:13.50
+08f82221
+User
+npssoPresent: true
+2025-03-22 22:54:13.50
+08f82221
+User
+}
+2025-03-22 22:54:13.50
+08f82221
+User
+Detailed error in /api/psn-title: Error: PSN API Error:
+2025-03-22 22:54:13.50
+08f82221
+User
+There was a problem retrieving your PSN access code. Is your NPSSO code valid?
+2025-03-22 22:54:13.50
+08f82221
+User
+To get a new NPSSO code, visit https://ca.account.sony.com/api/v1/ssocookie.
+2025-03-22 22:54:13.50
+08f82221
+User
+2025-03-22 22:54:13.50
+08f82221
+User
+at getTitleData (/home/runner/workspace/server.js:205:11)
+2025-03-22 22:54:13.50
+08f82221
+User
+at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+2025-03-22 22:54:13.50
+08f82221
+User
+at async /home/runner/workspace/server.js:212:23
+2025-03-22 22:54:13.65
+08f82221
+User
+Error in getTrophyData: Error:
+2025-03-22 22:54:13.65
+08f82221
+User
+There was a problem retrieving your PSN access code. Is your NPSSO code valid?
+2025-03-22 22:54:13.65
+08f82221
+User
+To get a new NPSSO code, visit https://ca.account.sony.com/api/v1/ssocookie.
+2025-03-22 22:54:13.65
+08f82221
+User
+2025-03-22 22:54:13.65
+08f82221
+User
+at _callee$ (/home/runner/workspace/node_modules/psn-api/dist/psn-api.cjs.development.js:462:17)
+2025-03-22 22:54:13.65
+08f82221
+User
+at tryCatch (/home/runner/workspace/node_modules/psn-api/dist/psn-api.cjs.development.js:52:17)
+2025-03-22 22:54:13.65
+08f82221
+User
+at Generator. (/home/runner/workspace/node_modules/psn-api/dist/psn-api.cjs.development.js:133:22)
+2025-03-22 22:54:13.65
+08f82221
+User
+at Generator.next (/home/runner/workspace/node_modules/psn-api/dist/psn-api.cjs.development.js:77:21)
+2025-03-22 22:54:13.65
+08f82221
+User
+at asyncGeneratorStep (/home/runner/workspace/node_modules/psn-api/dist/psn-api.cjs.development.js:314:24)
+2025-03-22 22:54:13.65
+08f82221
+User
+at _next (/home/runner

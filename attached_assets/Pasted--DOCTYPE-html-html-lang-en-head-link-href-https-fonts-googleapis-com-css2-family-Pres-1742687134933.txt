@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+  <meta charset="UTF-8" />
+  <title>PSN Combined Overlay</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      font-family: Arial, sans-serif;
+      color: #fff;
+      font-size: 16px;
+    }
+    .bottom-bar {
+      width: 1920px;
+      height: 40px;
+      background: linear-gradient(45deg, rgba(20, 20, 20, 0.85), rgba(40, 40, 40, 0.75), rgba(20, 20, 20, 0.85));
+      background-size: 400% 400%;
+      animation: gradientBG 8s ease infinite;
+      display: flex;
+      align-items: center;
+      padding: 0 10px;
+      box-sizing: border-box;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+    }
+    /* LEFT GROUP: Game Info */
+    .left-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .psn-icon, .game-icon {
+      width: 30px;
+      height: 30px;
+      background-size: cover;
+      background-position: center;
+    }
+
+
+    /* Title container: holds game title and platform */
+    .title-container {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+    .game-title {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .platform {
+      font-size: 16px;
+      color: #ccc;
+    }
+    /* Progress group: holds raw count and mini progress bar */
+    .progress-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 8px;
+    }
+    /* Raw trophy count text (e.g., (40/73)) */
+    #raw-count {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    /* Weighted completion label (e.g., 40.00%) */
+    #weighted-completion {
+      font-size: 16px;
+      font-weight: bold;
+      color: #fff;
+    }
+    /* XP bar styling */
+    .mini-progress-container {
+      width: 120px;
+      height: 12px;
+      border: 2px solid #4a4a4a;
+      border-radius: 6px;
+      background: #1a1a1a;
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.5);
+      padding: 2px;
+    }
+    .mini-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--progress-color), var(--progress-color));
+      width: 0%;
+      border-radius: 3px;
+      transition: width 0.5s ease;
+      box-shadow: 0 0 5px var(--progress-color);
+      position: relative;
+      overflow: hidden;
+    }
+    .mini-progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      animation: shimmer 1.5s infinite;
+    }
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Level Up effect */
+    #level-up {
+      display: none;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 16px;
+      color: #fff;
+      text-shadow: 2px 2px 0 #000;
+      animation: levelUpAnim 2s ease-out;
+      z-index: 1000;
+      white-space: nowrap;
+      margin-left: 96px;
+    }
+    .level-up-gif {
+      width: 100px; /* Adjust as needed */
+      height: auto;
+    }
+
+    @keyframes levelUpAnim {
+      0% { transform: translateX(-50%) scale(0); opacity: 0; }
+      50% { transform: translateX(-50%) scale(1.2); opacity: 1; }
+      100% { transform: translateX(-50%) scale(1); opacity: 0; }
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    @keyframes fadeInOut {
+      0% { opacity: 0; transform: scale(0.5); }
+      50% { opacity: 1; transform: scale(1.2); }
+      100% { opacity: 0; transform: scale(1); }
+    }
+    /* RIGHT GROUP: Trophy Counts, Username, Thanos Icon */
+    .right-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-left: auto;
+      margin-right: 50px;
+      flex-shrink: 0;
+    }
+    .trophy-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .trophy-box {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 16px;
+    }
+    .trophy-box img {
+      width: 24px;
+      height: 24px;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    .trophy-count {
+      font-weight: bold;
+      text-align: right;
+      min-width: 26px;
+      display: inline-block;
+      text-shadow: 0 0 5px rgba(255,255,255,0.3);
+    }
+
+    .trophy-count.pulse {
+      animation: pulse 0.5s ease-in-out;
+    }
+    .username {
+      font-size: 16px;
+      font-weight: bold;
+    }
+    .thanos-icon {
+      width: 30px;
+      height: 30px;
+      margin-left: 8px;
+      object-fit: cover;
+    }
+    .level-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-left: 85px;
+      padding: 4px 8px;
+      background: linear-gradient(45deg, #2a2a2a, #4a4a4a);
+      border: 2px solid var(--level-color);
+      border-radius: 12px;
+      box-shadow: 0 0 10px var(--level-color);
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px;
+    }
+    .level-badge span {
+      text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.8);
+    }
+  </style>
+</head>
+<body>
+  <div class="bottom-bar">
+    <!-- LEFT GROUP: Game Info -->
+    <div class="left-group">
+      <div class="psn-icon" id="psn-icon"></div>
+      <div class="game-icon" id="game-icon"></div>
+      <!-- Title container: game title and platform -->
+      <div class="title-container">
+        <span class="game-title" id="game-title">Loading...</span>
+        <span class="platform" id="platform">Loading...</span>
+      </div>
+
+      <!-- Progress group: raw trophy count and mini progress bar -->
+      <div class="progress-group">
+        <span id="raw-count">(0/0)</span>
+        <span id="weighted-completion">0.00%</span>
+        <div class="mini-progress-container">
+          <div class="mini-progress-fill" id="mini-progress-fill"></div>
+        </div>
+        <div id="level-up">LEVEL UP!
+          <img id="levelUpGif" class="level-up-gif" src="/levelup.gif" alt="Level Up Animation" style="display: none;">
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT GROUP: Trophy Counts, Username, and Thanos Icon -->
+    <div class="right-group">
+      <div class="trophy-group">
+        <div class="trophy-box">
+          <div class="level-badge">LV.<span id="level-number">0</span></div>
+          <img src="/40-platinum.png" alt="Platinum Icon" />
+          <span id="platinum-count" class="trophy-count">0</span>
+        </div>
+        <div class="trophy-box">
+          <img src="/40-gold.png" alt="Gold Icon" />
+          <span id="gold-count" class="trophy-count">0</span>
+        </div>
+        <div class="trophy-box">
+          <img src="/40-silver.png" alt="Silver Icon" />
+          <span id="silver-count" class="trophy-count">0</span>
+        </div>
+        <div class="trophy-box">
+          <img src="/40-bronze.png" alt="Bronze Icon" />
+          <span id="bronze-count" class="trophy-count">0</span>
+        </div>
+      </div>
+      <div class="username" id="psn-username">Crusafitch</div>
+      <img class="thanos-icon" src="/G7a4475764.png" alt="Thanos Icon">
+    </div>
+  </div>
+
+  <script>
+    // Store these values in localStorage so they persist across refreshes
+    let previousGameEarned = parseInt(localStorage.getItem('previousGameEarned')) || 0;
+    let previousLevel = parseInt(localStorage.getItem('previousLevel')) || 0;
+    let lastCompletion = localStorage.getItem('lastCompletion');
+
+    const pathParts = window.location.pathname.split('/');
+    const userId = pathParts[pathParts.length - 1];
+    console.log('Using userId:', userId);
+    if (!userId || userId === 'undefined') {
+      console.error('No valid userId found, redirecting to setup');
+      window.location.href = '/setup';
+      throw new Error('Redirecting to setup');
+    }
+    let userSettings;
+
+    async function loadUserSettings() {
+      const response = await fetch(`/api/settings/${userId}`);
+      userSettings = await response.json();
+
+      // Apply custom colors to root element and progress bar
+      const root = document.documentElement;
+      root.style.setProperty('--progress-color', userSettings.progress_color || '#8B0000');
+      root.style.setProperty('--level-color', userSettings.level_color || '#ff3333');
+
+      // Force update progress bar color
+      const progressFill = document.querySelector('.mini-progress-fill');
+      if (progressFill) {
+        progressFill.style.background = `linear-gradient(90deg, ${userSettings.progress_color || '#8B0000'}, ${userSettings.progress_color || '#8B0000'})`;
+        progressFill.style.boxShadow = `0 0 5px ${userSettings.progress_color || '#8B0000'}`;
+      }
+
+      // Apply level color to level number
+      const levelNumber = document.querySelector('.level-badge span');
+      if (levelNumber) {
+        levelNumber.style.color = userSettings.level_color || '#ff3333';
+      }
+
+      // Update profile pic if provided
+      const profilePic = document.querySelector('.thanos-icon');
+      if (profilePic && userSettings.profile_pic) {
+        profilePic.src = userSettings.profile_pic;
+      }
+
+      // Update trophy gif if provided
+      const trophyGif = document.getElementById('trophy-gif');
+      if (trophyGif && userSettings.gif_url) {
+        trophyGif.src = userSettings.gif_url;
+      }
+    }
+
+    async function fetchGameData() {
+      try {
+        console.log('Fetching game data for userId:', userId);
+        const response = await fetch(`/api/psn-title/${userId}`);
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(`Network response not OK: ${errorText}`);
+        }
+        const data = await response.json();
+        console.log("Fetched game data:", data);
+
+        // Set icons
+        document.getElementById('psn-icon').style.backgroundImage = 'url("/psn-icon.png")';
+        if (data.titleIconUrl) {
+          document.getElementById('game-icon').style.backgroundImage = `url(${data.titleIconUrl})`;
+        }
+
+        // Update game title and platform info
+        document.getElementById('game-title').textContent = data.titleName || "Game";
+        document.getElementById('platform').textContent = data.trophyTitlePlatform || "";
+
+        // Update raw trophy count (e.g., (40/73))
+        document.getElementById('raw-count').textContent = `(${data.earnedTrophies}/${data.definedTrophies})`;
+
+        // Update weighted completion and progress bar
+        // data.completion is a string like "40.00%
+        document.getElementById('weighted-completion').textContent = data.completion;
+        document.getElementById('mini-progress-fill').style.width = data.completion;
+
+        // Store current values without triggering animation
+        if (previousGameEarned === null || !localStorage.getItem('initialLoadDone')) {
+          console.log("Initial load - storing values");
+          localStorage.setItem('initialLoadDone', 'true');
+          previousGameEarned = data.earnedTrophies;
+          localStorage.setItem('previousGameEarned', data.earnedTrophies);
+        } else if (data.earnedTrophies > previousGameEarned) {
+          console.log("Trophy earned! Previous:", previousGameEarned, "Current:", data.earnedTrophies);
+          console.log("Triggering animations with GIF:", userSettings.gif_url);
+          localStorage.setItem('previousGameEarned', data.earnedTrophies);
+          previousGameEarned = data.earnedTrophies;
+
+          // Show trophy GIF animation
+          const trophyGif = document.getElementById('trophy-gif');
+          trophyGif.style.display = 'block';
+          setTimeout(() => {
+            trophyGif.style.display = 'none';
+          }, 3000);
+
+          return true; // Signal that a trophy was earned
+        }
+        return false;
+      } catch (error) {
+        console.error("Error fetching game data:", error.message);
+        document.getElementById('game-title').textContent = "Error loading data";
+        document.getElementById('platform').textContent = "";
+      }
+    }
+
+
+
+    let animationController = {
+      isAnimating: false,
+      timeout: null,
+
+      createParticle(x, y, color) {
+        const particle = document.createElement('div');
+        particle.style.cssText = `
+          position: fixed;
+          width: 8px;
+          height: 8px;
+          background: ${color};
+          border-radius: 50%;
+          pointer-events: none;
+          z-index: 1000;
+          box-shadow: 0 0 10px ${color};
+        `;
+
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 2 + Math.random() * 3;
+        const duration = 1000 + Math.random() * 500;
+        const distance = 100 + Math.random() * 100;
+
+        particle.style.left = `${x}px`;
+        particle.style.top = `${y}px`;
+        document.body.appendChild(particle);
+
+        particle.animate([
+          {
+            transform: 'translate(0, 0) scale(1)',
+            opacity: 1
+          },
+          {
+            transform: `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(0)`,
+            opacity: 0
+          }
+        ], {
+          duration: duration,
+          easing: 'cubic-bezier(0.4, 0, 0.2, 1)'
+        }).onfinish = () => particle.remove();
+      },
+
+      showAnimation(completion) {
+        if (this.isAnimating) return;
+        this.isAnimating = true;
+
+        if (this.timeout) clearTimeout(this.timeout);
+
+        const levelUp = document.getElementById('level-up');
+        const levelUpGif = document.getElementById('levelUpGif');
+        const progressFill = document.querySelector('.mini-progress-fill');
+        const progressRect = progressFill.getBoundingClientRect();
+        const progressContainer = document.querySelector('.mini-progress-container');
+        const containerRect = progressContainer.getBoundingClientRect();
+
+        // Get current width from the computed style
+        const computedStyle = window.getComputedStyle(progressFill);
+        const fillPercentage = parseFloat(computedStyle.width) / containerRect.width;
+
+        const startPos = { 
+          x: containerRect.left + (containerRect.width * fillPercentage),
+          y: progressRect.top + (progressRect.height / 2)
+        };
+
+        // Ensure text and GIF are visible
+        levelUp.style.opacity = '1';
+        levelUp.style.display = 'block';
+        levelUp.textContent = completion === "100.00%" ? "LEVEL UP!" : "+XP!";
+        if (levelUpGif) {
+          levelUpGif.style.opacity = '1';
+          levelUpGif.style.display = 'block';
+        }
+
+
+        // Create starburst effect with progress bar color
+        const progressColor = getComputedStyle(document.documentElement).getPropertyValue('--progress-color').trim();
+        const colors = [progressColor];
+        const particleCount = completion === "100.00%" ? 40 : 20;
+
+        for (let i = 0; i < particleCount; i++) {
+          setTimeout(() => {
+            this.createParticle(
+              startPos.x,
+              startPos.y,
+              progressColor
+            );
+          }, i * 50);
+        }
+
+        this.timeout = setTimeout(() => {
+          levelUp.style.display = 'none';
+          levelUpGif.style.display = 'none';
+          this.isAnimating = false;
+          this.timeout = null;
+        }, 2000);
+      }
+    };
+
+    function showCompletionOrLevelUp(completion) {
+      animationController.showAnimation(completion);
+    }
+
+
+    async function fetchOverallTrophies() {
+      try {
+        const response = await fetch(`/api/psn-stats/${userId}`);
+        if (!response.ok) throw new Error("Network response not OK");
+        const data = await response.json();
+        console.log("Fetched overall trophy data:", data);
+        const earned = data.earnedTrophies || {};
+        document.getElementById("platinum-count").textContent = earned.platinum || 0;
+        document.getElementById("gold-count").textContent = earned.gold || 0;
+        document.getElementById("silver-count").textContent = earned.silver || 0;
+        document.getElementById("bronze-count").textContent = earned.bronze || 0;
+        document.getElementById("level-number").textContent = data.trophyLevel || 0;
+      } catch (error) {
+        console.error("Error fetching overall trophy data:", error);
+      }
+    }
+
+    async function setUsername() {
+      try {
+        const response = await fetch(`/api/psn-stats/${userId}`);
+        if (!response.ok) throw new Error("Network response not OK");
+        const data = await response.json();
+        const username = data.username || "Loading...";
+        document.getElementById("psn-username").textContent = username;
+      } catch (error) {
+        console.error("Error fetching username:", error);
+        document.getElementById("psn-username").textContent = "Loading...";
+      }
+    }
+
+    async function fetchAllData() {
+      try {
+        await loadUserSettings();
+        await setUsername();
+        const trophyEarned = await fetchGameData();
+        const trophyData = await fetchOverallTrophies();
+
+        // Check for level up
+        const currentLevel = parseInt(document.getElementById('level-number').textContent);
+        if (previousLevel && currentLevel > previousLevel) {
+          showCompletionOrLevelUp('100.00%');
+        }
+        // Update previous level
+        previousLevel = currentLevel;
+        localStorage.setItem('previousLevel', previousLevel);
+
+        if (trophyEarned) {
+          showCompletionOrLevelUp(document.getElementById('weighted-completion').textContent);
+        }
+      } catch (error) {
+        console.error('Error in fetchAllData:', error);
+      }
+    }
+
+    function simulateTrophyEarned() {
+      showCompletionOrLevelUp(document.getElementById('weighted-completion').textContent);
+    }
+
+    fetchAllData();
+    setInterval(fetchAllData, 60000);
+  </script>
+</body>
+</html>

@@ -1,0 +1,19 @@
+{
+  "name": "psn-achievement-auto-update",
+  "version": "1.0.0",
+  "description": "An Express app that force-updates the PS overlay when a new achievement is earned using the PSN API.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-fetch": "^2.6.7",
+    "psn-api": "github:achievements-app/psn-api#main",
+    "puppeteer": "^24.4.0"
+  },
+  "engines": {
+    "node": "14.x"
+  },
+  "license": "MIT"
+}

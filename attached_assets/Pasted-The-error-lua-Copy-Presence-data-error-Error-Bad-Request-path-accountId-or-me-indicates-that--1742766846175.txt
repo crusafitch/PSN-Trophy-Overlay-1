@@ -1,0 +1,128 @@
+The error:
+
+lua
+Copy
+Presence data error: Error: Bad Request (path: accountId_or_me)
+indicates that the PSN API endpoint for presence (via getBasicPresence) isn’t receiving the expected value. In this case, it looks like you're passing "me" instead of a valid account ID.
+
+How to Fix:
+
+Instead of passing the string "me" (or leaving it ambiguous), pass the actual account ID you obtain from the profile lookup. For example, if you’re using:
+
+js
+Copy
+const profile = await getProfileFromUserName(accessToken, "crusafitch");
+Then use:
+
+js
+Copy
+const presence = await getBasicPresence(accessToken, profile.accountId);
+rather than using "me". This should satisfy the API's expectation for a valid account identifier.
+
+Revised Code Snippet
+Below is the updated portion of your getTrophyData function:
+
+js
+Copy
+async function getTrophyData() {
+  const npsso = process.env.PSN_NPSSO;
+  if (!npsso) {
+    console.error("[Trophy] Missing PSN_NPSSO environment variable");
+    throw new Error("PSN authentication token not configured");
+  }
+
+  try {
+    console.log("[Trophy] Starting authentication");
+    let accessToken;
+
+    // Token retrieval logic (using refresh or new tokens)
+    if (tokenData.accessToken && tokenData.lastRefresh && 
+        (Date.now() - tokenData.lastRefresh) < 3600000) {
+      console.log("[Trophy] Using existing token");
+      accessToken = tokenData.accessToken;
+    } else if (tokenData.refreshToken) {
+      console.log("[Trophy] Refreshing token");
+      try {
+        const newTokens = await exchangeRefreshTokenForAuthTokens(tokenData.refreshToken);
+        tokenData = {
+          accessToken: newTokens.accessToken,
+          refreshToken: newTokens.refreshToken,
+          lastRefresh: Date.now()
+        };
+        accessToken = newTokens.accessToken;
+      } catch (refreshError) {
+        console.log("[Trophy] Refresh failed, getting new tokens");
+        const authCode = await exchangeNpssoForCode(npsso);
+        const tokens = await exchangeCodeForAccessToken(authCode);
+        tokenData = {
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
+          lastRefresh: Date.now()
+        };
+        accessToken = tokens.accessToken;
+      }
+    } else {
+      console.log("[Trophy] Getting new tokens");
+      const authCode = await exchangeNpssoForCode(npsso);
+      const tokens = await exchangeCodeForAccessToken(authCode);
+      tokenData = {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+        lastRefresh: Date.now()
+      };
+      accessToken = tokens.accessToken;
+    }
+    
+    console.log("[Trophy] Getting profile");
+    const profile = await getProfileFromUserName(accessToken, "crusafitch");
+    console.log("[Trophy] Got profile:", profile.accountId);
+    
+    // Instead of using "me", pass the actual accountId from the profile.
+    console.log("[Trophy] Fetching trophy summary");
+    const trophySummary = await getUserTrophyProfileSummary(accessToken, profile.accountId);
+    console.log("[Trophy] Got trophy summary successfully");
+
+    // If you also need presence data, use the valid accountId:
+    console.log("[Trophy] Fetching presence data");
+    const presence = await getBasicPresence(accessToken, profile.accountId);
+    console.log("[Trophy] Got presence data:", presence);
+
+    return {
+      trophyLevel: trophySummary.level,
+      progress: trophySummary.progress,
+      earnedTrophies: {
+        bronze: trophySummary.earnedTrophies.bronze,
+        silver: trophySummary.earnedTrophies.silver,
+        gold: trophySummary.earnedTrophies.gold,
+        platinum: trophySummary.earnedTrophies.platinum
+      },
+      username: profile.onlineId || "crusafitch"
+    };
+  } catch (error) {
+    console.error("[Trophy] Error in getTrophyData:", error);
+    return {
+      trophyLevel: 0,
+      progress: 0,
+      earnedTrophies: { bronze: 0, silver: 0, gold: 0, platinum: 0 },
+      username: "crusafitch"
+    };
+  }
+}
+Summary
+Issue:
+Passing "me" to getBasicPresence causes a bad request because the API expects a valid account identifier.
+
+Fix:
+Use the actual accountId from the profile (obtained with getProfileFromUserName) when calling getBasicPresence.
+
+Try deploying this change. It should resolve the "Bad Request (path: accountId_or_me)" error. Let me know if you run into any further issues!
+
+
+
+
+
+
+
+
+
+Deep research

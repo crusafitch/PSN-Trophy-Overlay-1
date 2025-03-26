@@ -1,0 +1,69 @@
+Verify Environment Variables on Deployment:
+Double-check that your PSN_NPSSO environment variable is actually set on your deployed instance. You can add a temporary endpoint (or log) to output (a masked version of) its value. If the token isn’t set or is incorrect, no valid access token can be generated.
+
+Add Detailed Logging in getValidAccessToken:
+Insert console logs inside your getValidAccessToken() function to verify which branch of the token retrieval logic is executed and to see what token values (or at least their lengths) are being returned. For example:
+
+js
+Copy
+async function getValidAccessToken() {
+  const npsso = process.env.PSN_NPSSO;
+  if (!npsso) {
+    console.error("PSN_NPSSO not configured in deployment");
+    throw new Error("PSN_NPSSO not configured");
+  }
+  console.log("PSN_NPSSO length:", npsso.length);
+  
+  try {
+    if (tokenData.accessToken && tokenData.lastRefresh && 
+        (Date.now() - tokenData.lastRefresh) < 3600000) {
+      console.log("Using existing token. Token length:", tokenData.accessToken.length);
+      return tokenData.accessToken;
+    } else if (tokenData.refreshToken) {
+      console.log("Attempting token refresh");
+      const newTokens = await exchangeRefreshTokenForAuthTokens(tokenData.refreshToken);
+      tokenData = {
+        accessToken: newTokens.accessToken,
+        refreshToken: newTokens.refreshToken,
+        lastRefresh: Date.now()
+      };
+      console.log("Token refreshed. New token length:", tokenData.accessToken.length);
+      return tokenData.accessToken;
+    } else {
+      console.log("No valid token available. Performing full authentication");
+      const authCode = await exchangeNpssoForCode(npsso);
+      const tokens = await exchangeCodeForAccessToken(authCode);
+      tokenData = {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+        lastRefresh: Date.now()
+      };
+      console.log("New tokens obtained. Token length:", tokenData.accessToken.length);
+      return tokenData.accessToken;
+    }
+  } catch (error) {
+    console.error("Error in getValidAccessToken:", error);
+    throw error;
+  }
+}
+This way, when deployed you can inspect your logs to ensure you’re getting a valid token (by checking its length, for instance).
+
+Confirm PSN API Endpoints and Usage:
+Make sure that the PSN API endpoints your code is using (via psn-api) haven’t changed or have additional requirements. Sometimes APIs may enforce extra validation on tokens in a production environment.
+
+Check for Rate Limits or IP Restrictions:
+Some APIs restrict requests based on the originating IP address or request rate. Verify that your deployed server isn’t hitting rate limits or being blocked by PSN’s API.
+
+Test Individual API Calls:
+Temporarily create simple endpoints to test individual calls (for example, an endpoint that only calls getProfileFromUserName) to isolate which call is failing. This can help pinpoint if the issue is with the trophy summary or with the profile lookup.
+
+Review Deployment Logs:
+Your deployed logs (from Replit or your hosting platform) should show the detailed logs you added. Look for messages like “Using existing token,” “Attempting token refresh,” or “New tokens obtained.” These logs can guide you on whether the token refresh flow is working as expected.
+
+If after these steps the token still comes back as invalid, double-check your PSN_NPSSO value (it might need to be refreshed manually from PSN) and confirm with the psn-api documentation if any changes are required.
+
+Let me know if these debugging tips help you get closer to resolving the issue!
+
+
+
+

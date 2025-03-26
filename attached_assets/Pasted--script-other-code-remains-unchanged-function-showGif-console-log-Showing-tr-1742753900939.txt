@@ -1,0 +1,73 @@
+<script>
+  // ... (other code remains unchanged)
+
+  function showGif() {
+    console.log("Showing trophy earned GIF animation");
+    const gif = document.getElementById("bar-gif");
+    gif.style.display = "inline-block";
+    
+    // Removed the call to showCompletionOrLevelUp() since we don't want level up animation
+    // If you want particles, you can keep that here:
+    const progressBar = document.querySelector('.mini-progress-fill');
+    const rect = progressBar.getBoundingClientRect();
+    for (let i = 0; i < 10; i++) {
+      createParticle(rect.right, rect.top + rect.height / 2);
+    }
+    
+    setTimeout(() => {
+      gif.style.display = "none";
+    }, 3000);
+  }
+
+  // Optionally, remove or hide the level-up element entirely by not calling it anywhere
+  // Or simply leave it hidden via CSS (display: none)
+
+  async function fetchGameData() {
+    try {
+      const response = await fetch('/api/psn-title?' + new Date().getTime(), {
+        headers: {
+          'Accept': 'application/json',
+          'Cache-Control': 'no-cache'
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response not OK');
+      }
+
+      const data = await response.json();
+      console.log("Fetched game data:", data);
+
+      // Set icons
+      document.getElementById('psn-icon').style.backgroundImage = 'url("/psn-icon.png")';
+      if (data.titleIconUrl) {
+        document.getElementById('game-icon').style.backgroundImage = `url(${data.titleIconUrl})`;
+      }
+
+      // Update game title and platform info
+      document.getElementById('game-title').textContent = data.titleName || "Game";
+      document.getElementById('platform').textContent = data.trophyTitlePlatform || "";
+
+      // Update raw trophy count (e.g., (40/73))
+      document.getElementById('raw-count').textContent = `(${data.earnedTrophies}/${data.definedTrophies})`;
+
+      // Update weighted completion and mini progress bar (for current game)
+      document.getElementById('weighted-completion').textContent = data.completion;
+      document.getElementById('mini-progress-fill').style.width = data.completion;
+
+      // Trigger trophy earned animation if new trophies were earned
+      console.log("Trophy check - Previous:", previousGameEarned, "Current:", data.earnedTrophies);
+      if (data.earnedTrophies > previousGameEarned) {
+        console.log("New trophy earned! Triggering trophy animation");
+        localStorage.setItem('previousGameEarned', data.earnedTrophies);
+        showGif();
+      }
+
+      previousGameEarned = data.earnedTrophies;
+    } catch (error) {
+      console.error("Error fetching game data:", error);
+    }
+  }
+
+  // ... (rest of the code remains unchanged)
+</script>

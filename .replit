@@ -1,0 +1,48 @@
+modules = ["nodejs-20", "web", "bash", "nix"]
+run = "npm run start"
+
+[nix]
+channel = "stable-24_05"
+
+[workflows]
+runButton = "Project"
+
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "PSN Trophy Tracker"
+
+[[workflows.workflow]]
+name = "PSN Trophy Tracker"
+author = "agent"
+
+[workflows.workflow.metadata]
+agentRequireRestartOnSave = false
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node minimal-server.js"
+waitForPort = 5000
+
+[deployment]
+run = ["sh", "-c", "node minimal-server.js"]
+deploymentTarget = "cloudrun"
+
+[[ports]]
+localPort = 80
+externalPort = 3000
+
+[[ports]]
+localPort = 3000
+externalPort = 80
+
+[[ports]]
+localPort = 5000
+externalPort = 5000
