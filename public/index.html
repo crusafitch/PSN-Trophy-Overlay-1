@@ -75,6 +75,20 @@
             <label for="psnId">Enter your PSN ID:</label>
             <input type="text" id="psnId" placeholder="Your PlayStation Network ID">
         </div>
+        <div class="form-group">
+            <label for="trophyGif">Custom Trophy Animation (optional):</label>
+            <input type="file" id="trophyGif" accept="image/gif">
+            <p class="hint">This GIF will play when you earn a new trophy (only GIF files allowed)</p>
+        </div>
+
+        <div class="form-group">
+            <label for="position">Overlay Position:</label>
+            <select id="position" name="position">
+                <option value="bottom">Bottom</option>
+                <option value="top">Top</option>
+            </select>
+            <p class="hint">Choose where the overlay should appear on screen</p>
+        </div>
         <button id="trackBtn">Start Tracking</button>
         <div class="status" id="statusMsg">Ready to track your trophies</div>
     </div>
@@ -86,9 +100,9 @@
                 document.getElementById('statusMsg').textContent = 'Please enter your PSN ID';
                 return;
             }
-            
+
             document.getElementById('statusMsg').textContent = 'Connecting to PSN...';
-            
+
             // In a real implementation, this would make an API call to your backend
             // For now, we're just showing a success message
             setTimeout(() => {
