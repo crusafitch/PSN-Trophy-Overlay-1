@@ -438,6 +438,9 @@ function getOverlayHtml(overlayData) {
   <meta charset="UTF-8" />
   <title>PSN Combined Overlay</title>
   <style>
+    :root {
+      --progress-color: ${overlayData.progressColor || '#ffdd00'};
+    }
     body {
       margin: 0;
       padding: 0;
@@ -518,11 +521,11 @@ function getOverlayHtml(overlayData) {
     }
     .mini-progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, ${overlayData.progressColor || '#580000'}, ${overlayData.progressColor || '#8B0000'});
+      background: linear-gradient(90deg, var(--progress-color), var(--progress-color));
       width: 0%;
       border-radius: 3px;
       transition: width 0.5s ease;
-      box-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
+      box-shadow: 0 0 5px var(--progress-color);
       position: relative;
       overflow: visible;
     }
