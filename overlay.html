@@ -106,12 +106,14 @@
       transform: translateY(-50%);
       width: 6px;
       height: 15px;
-      background: #ff3333;
+      background: var(--progress-color, #ffdd00);
       border-radius: 3px;
       box-shadow: 
-        0 0 5px #ff3333,
-        0 0 10px #ff3333,
-        0 0 15px #ff3333;
+        0 0 5px var(--progress-color, #ffdd00),
+        0 0 10px var(--progress-color, #ffdd00),
+        0 0 15px var(--progress-color, #ffdd00),
+        0 0 20px var(--progress-color, #ffdd00),
+        2px 0 10px rgba(0,0,0,0.5);
       animation: glow 1s ease-in-out infinite alternate;
     }
     @keyframes glow {
