@@ -795,6 +795,7 @@ function getOverlayHtml(overlayData) {
     let previousGameEarned = parseInt(localStorage.getItem('previousGameEarned')) || 0;
     let previousLevel = parseInt(localStorage.getItem('previousLevel')) || 0;
     let lastCompletion = localStorage.getItem('lastCompletion');
+    let previousGameTitle = localStorage.getItem('previousGameTitle') || '';
     const overlayId = '${overlayData.id}';
 
     async function fetchGameData() {
@@ -831,14 +832,19 @@ function getOverlayHtml(overlayData) {
         document.getElementById('weighted-completion').textContent = data.completion;
         document.getElementById('mini-progress-fill').style.width = data.completion;
 
-        // Trigger animations if new trophies were earned
+        // Trigger animations if new trophies were earned or game changed
         console.log("Trophy check - Previous:", previousGameEarned, "Current:", data.earnedTrophies);
-        // Initialize on first load or trigger on trophy increase
+        console.log("Game check - Previous:", previousGameTitle, "Current:", data.titleName);
+        
+        // Initialize on first load or trigger on trophy increase/game change
         if (previousGameEarned === null) {
           previousGameEarned = data.earnedTrophies;
-        } else if (data.earnedTrophies > previousGameEarned) {
-          console.log("Trophy earned! Triggering animations");
+          previousGameTitle = data.titleName;
+        } else if (data.earnedTrophies > previousGameEarned || 
+                  (data.titleName !== previousGameTitle && data.earnedTrophies > 0)) {
+          console.log("Trophy earned or new game trophy! Triggering animations");
           localStorage.setItem('previousGameEarned', data.earnedTrophies);
+          localStorage.setItem('previousGameTitle', data.titleName);
           const progressBar = document.querySelector('.mini-progress-fill');
           const rect = progressBar.getBoundingClientRect();
           showAchievementAnimations(rect);
