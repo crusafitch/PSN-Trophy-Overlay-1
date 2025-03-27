@@ -1526,9 +1526,9 @@ async function handleApiRequest(req, res) {
             
             // Calculate PSN-style completion percentage
             const platinumPoints = 300;
-            const goldPoints = 90;
-            const silverPoints = 30;
-            const bronzePoints = 15;
+            const goldPoints = 30;
+            const silverPoints = 15;
+            const bronzePoints = 5;
 
             const earnedPoints = 
                 (latestTitle.earnedTrophies?.platinum || 0) * platinumPoints +
