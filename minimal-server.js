@@ -835,11 +835,11 @@ function getOverlayHtml(overlayData) {
         // Trigger animations if new trophies were earned or game changed
         console.log("Trophy check - Previous:", previousGameEarned, "Current:", data.earnedTrophies);
         console.log("Game check - Previous:", previousGameTitle, "Current:", data.titleName);
-        
+
         // Initialize on first load or trigger on trophy increase/game change
         if (previousGameEarned === null) {
           previousGameEarned = data.earnedTrophies;
-          previousGameTitle = data.titleName;
+          localStorage.setItem('previousGameTitle', data.titleName);
         } else if (data.earnedTrophies > previousGameEarned || 
                   (data.titleName !== previousGameTitle && data.earnedTrophies > 0)) {
           console.log("Trophy earned or new game trophy! Triggering animations");
