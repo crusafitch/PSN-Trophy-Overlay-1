@@ -454,7 +454,7 @@
     function showCompletionOrLevelUp(completion) {
       const levelUp = document.getElementById('level-up');
       if (levelUp) {
-        levelUp.textContent = completion === "100.00%" ? "Level Up!" : "+XP!";
+        levelUp.textContent = "+XP!"; // Always show +XP!
         levelUp.style.display = 'block';
 
         setTimeout(() => {
@@ -523,20 +523,7 @@
         document.getElementById("bronze-count").textContent = earned.bronze || 0;
         document.getElementById("level-number").textContent = data.trophyLevel || 0;
 
-        // Check if level went up
-        if (previousLevel !== null && data.trophyLevel > previousLevel) {
-          console.log("Level up detected!");
-          // Show level up animation
-          const levelUp = document.getElementById('level-up');
-          if (levelUp) {
-            levelUp.textContent = "Level Up!";
-            levelUp.style.display = 'block';
-
-            setTimeout(() => {
-              levelUp.style.display = 'none';
-            }, 3000);
-          }
-        }
+        //Removed level up check
         previousLevel = data.trophyLevel;
         localStorage.setItem('previousLevel', previousLevel);
 
