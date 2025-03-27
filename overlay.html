@@ -614,9 +614,18 @@
     fetchGameData();
     fetchOverallTrophies();
 
-    // Periodic refresh (every 60 seconds)
-    setInterval(fetchGameData, 60000);
-    setInterval(fetchOverallTrophies, 60000);
+    // Periodic refresh (every 30 seconds)
+    setInterval(async () => {
+      const prevEarned = previousGameEarned;
+      await fetchGameData();
+      // Only trigger animation if trophies actually increased
+      if (prevEarned !== null && previousGameEarned > prevEarned) {
+        const progressBar = document.querySelector('.mini-progress-fill');
+        const rect = progressBar.getBoundingClientRect();
+        showAchievementAnimations(rect);
+      }
+    }, 30000);
+    setInterval(fetchOverallTrophies, 30000);
   </script>
 </body>
 </html>
