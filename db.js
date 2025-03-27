@@ -1,29 +1,24 @@
-const { Pool } = require('pg');
-require('dotenv').config();
+const sqlite3 = require('sqlite3').verbose();
+const { open } = require('sqlite');
 
-// Create a new Pool using the DATABASE_URL environment variable
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
-  }
+// Create SQLite database connection
+const dbPromise = open({
+  filename: 'overlay.db',
+  driver: sqlite3.Database
 });
 
 // Initialize database tables (if they don't exist)
 async function initializeDatabase() {
-  // Use a transaction to avoid partial setup
-  const client = await pool.connect();
+  // Get database connection
+  const db = await dbPromise;
   
   try {
-    await client.query('BEGIN');
+    await db.exec('BEGIN');
     
     // Check if users table exists
-    const tableExists = await client.query(`
-      SELECT EXISTS (
-        SELECT FROM information_schema.tables 
-        WHERE table_schema = 'public' 
-        AND table_name = 'users'
-      )
+    const tableExists = await db.get(`
+      SELECT name FROM sqlite_master 
+      WHERE type='table' AND name='users'
     `);
     
     if (!tableExists.rows[0].exists) {
