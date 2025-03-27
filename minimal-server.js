@@ -21,7 +21,7 @@ async function initializePSN() {
         console.error('PSN_NPSSO environment variable not found');
         return false;
     }
-    
+
     try {
         const result = await psnApi.initializePSNApi(NPSSO);
         if (result.success) {
@@ -237,17 +237,17 @@ function getHomePageHtml(psnStatus) {
                 text-shadow: 0 0 5px #ff0000, 0 0 10px #ff0000;
                 color: #ffffff;
             }
-            
+
             @keyframes pulse {
                 0% { transform: scale(1); }
                 50% { transform: scale(1.05); }
                 100% { transform: scale(1); }
             }
-            
+
             .pulse {
                 animation: pulse 2s infinite ease-in-out;
             }
-            
+
             /* Retro scanline effect */
             .scanline {
                 position: relative;
@@ -281,46 +281,46 @@ function getHomePageHtml(psnStatus) {
                     <div class="subtitle">Overlay Project by Crusafitch</div>
                 </div>
             </div>
-            
+
             <div class="status">
                 <span class="api-status ${psnStatus ? 'online' : 'offline'}"></span>
                 <span class="api-text"><strong>PSN API STATUS:</strong> ${psnStatus ? 'CONNECTED' : 'DISCONNECTED'}</span>
             </div>
-            
+
             <div class="meme-container">
                 <img src="/images/its-happening-meme.jpg" alt="It's Happening Meme" class="meme-image pulse">
             </div>
-            
+
             <div class="form-group">
                 <h2>CREATE YOUR TROPHY OVERLAY</h2>
                 <p>Enter your PSN ID to generate a unique browser source URL for OBS.</p>
-                
+
                 <div class="form-group">
                     <label for="psnId">PSN ID:</label>
                     <input type="text" id="psnId" placeholder="Your PlayStation Network ID">
                 </div>
-                
+
                 <div class="form-group">
                     <label for="progressColor">Progress Bar Color:</label>
                     <input type="color" id="progressColor" value="#ff0000">
                 </div>
-                
+
 
                 <div class="form-group">
                     <label for="profilePic">Custom Profile Picture (optional):</label>
                     <input type="file" id="profilePic" accept="image/*">
                     <p class="hint">Replace the default icon with your custom image</p>
                 </div>
-                
+
                 <div class="form-group">
                     <label for="trophyGif">Custom Trophy Animation (optional):</label>
                     <input type="file" id="trophyGif" accept="image/gif" onchange="validateGifFile(this)">
                     <p class="hint">This GIF will play when you earn a new trophy (only GIF files allowed)</p>
                 </div>
-                
+
                 <button id="createBtn" class="pulse">CREATE OVERLAY</button>
             </div>
-            
+
             <div class="result pixel-border" id="result">
                 <h2 class="glow-text">IT'S HAPPENING: OVERLAY CREATED!</h2>
                 <p>Use this URL as a browser source in OBS Studio or Streamlabs</p>
@@ -328,83 +328,83 @@ function getHomePageHtml(psnStatus) {
                 <p>Your overlay will automatically check for trophy updates every minute.</p>
             </div>
         </div>
-        
+
         <script>
             // Validate that uploaded trophy files are GIF format
             function validateGifFile(fileInput) {
                 const file = fileInput.files[0];
                 if (!file) return; // No file selected
-                
+
                 // Check file extension
                 const fileName = file.name.toLowerCase();
                 const isGif = fileName.endsWith('.gif');
-                
+
                 // Check mimetype if available
                 const isGifMimetype = file.type === 'image/gif';
-                
+
                 if (!isGif || !isGifMimetype) {
                     alert('Please select a GIF file for trophy animations. Other file types are not supported.');
                     fileInput.value = ''; // Clear the file input
                 }
             }
-            
+
             document.getElementById('createBtn').addEventListener('click', async function() {
                 const psnId = document.getElementById('psnId').value;
                 const progressColor = document.getElementById('progressColor').value;
                 const profilePic = document.getElementById('profilePic').files[0];
                 const trophyGif = document.getElementById('trophyGif').files[0];
-                
+
                 if (!psnId) {
                     alert('Please enter your PSN ID');
                     return;
                 }
-                
+
                 try {
                     // Show loading state
                     const btn = document.getElementById('createBtn');
                     const originalText = btn.textContent;
                     btn.textContent = 'CREATING...';
                     btn.disabled = true;
-                    
+
                     // First create the overlay to get the ID
                     const response = await fetch(\`/api/create-overlay?psnId=\${encodeURIComponent(psnId)}&progressColor=\${encodeURIComponent(progressColor)}\`);
                     const data = await response.json();
-                    
+
                     if (data.success) {
                         const overlayId = data.overlayId;
                         document.getElementById('overlayUrl').textContent = window.location.origin + '/overlay/' + overlayId;
                         document.getElementById('result').style.display = 'block';
-                        
+
                         // Handle file uploads if selected
                         if (profilePic || trophyGif) {
                             const formData = new FormData();
                             formData.append('overlayId', overlayId);
-                            
+
                             if (profilePic) {
                                 const profileFormData = new FormData();
                                 profileFormData.append('overlayId', overlayId);
                                 profileFormData.append('fileType', 'profile');
                                 profileFormData.append('file', profilePic);
-                                
+
                                 await fetch('/api/upload', {
                                     method: 'POST',
                                     body: profileFormData
                                 });
                             }
-                            
+
                             if (trophyGif) {
                                 const trophyFormData = new FormData();
                                 trophyFormData.append('overlayId', overlayId);
                                 trophyFormData.append('fileType', 'trophy');
                                 trophyFormData.append('file', trophyGif);
-                                
+
                                 await fetch('/api/upload', {
                                     method: 'POST',
                                     body: trophyFormData
                                 });
                             }
                         }
-                        
+
                         // Scroll to result
                         document.getElementById('result').scrollIntoView({
                             behavior: 'smooth'
@@ -412,7 +412,7 @@ function getHomePageHtml(psnStatus) {
                     } else {
                         alert('Error: ' + data.error);
                     }
-                    
+
                     // Restore button
                     btn.textContent = originalText;
                     btn.disabled = false;
@@ -783,7 +783,7 @@ function getOverlayHtml(overlayData) {
       ${overlayData.profilePicPath ? `<img class="thanos-icon" src="${overlayData.profilePicPath}" alt="Profile Icon">` : ''}
     </div>
   </div>
-  
+
   <!-- Test Button -->
   <button id="test-achievement" class="test-button">Test Achievement</button>
 
@@ -852,7 +852,7 @@ function getOverlayHtml(overlayData) {
       if (xpPopup) {
         xpPopup.textContent = completion === "100.00%" ? "Level Up!" : "+XP!";
         xpPopup.style.display = 'inline-block';
-        
+
         // Reset animation
         xpPopup.style.animation = 'none';
         void xpPopup.offsetWidth; // Trigger reflow
@@ -923,7 +923,7 @@ function getOverlayHtml(overlayData) {
         document.getElementById("silver-count").textContent = earned.silver || 0;
         document.getElementById("bronze-count").textContent = earned.bronze || 0;
         document.getElementById("level-number").textContent = data.trophyLevel || 0;
-        
+
         // Check if level went up
         if (previousLevel !== null && data.trophyLevel > previousLevel) {
           console.log("Level up detected!");
@@ -932,12 +932,12 @@ function getOverlayHtml(overlayData) {
           if (xpPopup) {
             xpPopup.textContent = "Level Up!";
             xpPopup.style.display = 'inline-block';
-            
+
             // Reset animation
             xpPopup.style.animation = 'none';
             void xpPopup.offsetWidth; // Trigger reflow
             xpPopup.style.animation = 'bounceIn 0.5s ease-out, fadeOut 2s ease-in 1s forwards';
-            
+
             setTimeout(() => {
               xpPopup.style.display = 'none';
             }, 3000);
@@ -945,7 +945,7 @@ function getOverlayHtml(overlayData) {
         }
         previousLevel = data.trophyLevel;
         localStorage.setItem('previousLevel', previousLevel);
-        
+
         // Update username if needed
         if (data.onlineId) {
           document.getElementById("psn-username").textContent = data.onlineId;
@@ -956,35 +956,35 @@ function getOverlayHtml(overlayData) {
     }
 
     let animationInProgress = false;
-    
+
     function showAchievementAnimations(rect) {
       if (animationInProgress) return;
       animationInProgress = true;
-      
+
       console.log("Showing achievement animations");
-      
+
       // Show trophy GIF if it exists (only if user uploaded one)
       const gif = document.getElementById('bar-gif');
       if (gif) {
         gif.style.display = 'inline-block';
       }
-      
+
       // Show in-line XP popup
       const xpPopup = document.getElementById('xp-popup');
       if (xpPopup) {
         xpPopup.style.display = 'inline-block';
-        
+
         // Reset animation by removing and adding the class
         xpPopup.style.animation = 'none';
         void xpPopup.offsetWidth; // Trigger reflow
         xpPopup.style.animation = 'bounceIn 0.5s ease-out, fadeOut 2s ease-in 1s forwards';
       }
-      
+
       // Create particles
       for (let i = 0; i < 10; i++) {
         createParticle(rect.right, rect.top + rect.height / 2);
       }
-      
+
       setTimeout(() => {
         // Hide gif if it exists
         if (gif) {
@@ -1009,7 +1009,7 @@ function getOverlayHtml(overlayData) {
     // Initial data fetch
     fetchGameData();
     fetchOverallTrophies();
-    
+
     // Periodic refresh (every 60 seconds)
     setInterval(fetchGameData, 60000);
     setInterval(fetchOverallTrophies, 60000);
@@ -1024,7 +1024,7 @@ async function handleApiRequest(req, res) {
     const parsedUrl = url.parse(req.url, true);
     const endpoint = parsedUrl.pathname;
     const params = parsedUrl.query;
-    
+
     // API status endpoint
     if (endpoint === '/api/status') {
         const response = {
@@ -1033,13 +1033,13 @@ async function handleApiRequest(req, res) {
             psnApiConnected: psnInitialized,
             serverTime: new Date().toISOString()
         };
-        
+
         res.setHeader('Content-Type', 'application/json');
         res.writeHead(200);
         res.end(JSON.stringify(response));
         return;
     }
-    
+
     // Create overlay endpoint
     if (endpoint === '/api/create-overlay') {
         if (!params.psnId) {
@@ -1051,10 +1051,10 @@ async function handleApiRequest(req, res) {
             }));
             return;
         }
-        
+
         // Generate unique ID for the overlay
         const overlayId = uuidv4();
-        
+
         // Store overlay configuration in database
         try {
             const overlayData = {
@@ -1063,15 +1063,15 @@ async function handleApiRequest(req, res) {
                 progressColor: params.progressColor || '#2d7fea', // Blue progress color (default)
                 // levelColor removed as it's now always white (#ffffff)
             };
-            
+
             // Store in database
             await db.createOverlay(overlayData);
-            
+
             // Also cache in memory for faster access
             overlaysCache.set(overlayId, overlayData);
-            
+
             console.log(`Created overlay ${overlayId} for PSN ID: ${params.psnId}`);
-            
+
             res.setHeader('Content-Type', 'application/json');
             res.writeHead(200);
             res.end(JSON.stringify({
@@ -1089,7 +1089,7 @@ async function handleApiRequest(req, res) {
         }
         return;
     }
-    
+
     // Profile data endpoint
     if (endpoint === '/api/profile-data') {
         if (!params.overlayId) {
@@ -1101,15 +1101,15 @@ async function handleApiRequest(req, res) {
             }));
             return;
         }
-        
+
         // Get overlay configuration (first try cache, then database)
         let overlay = overlaysCache.get(params.overlayId);
-        
+
         if (!overlay) {
             try {
                 // If not in cache, try to get from database
                 overlay = await db.getOverlay(params.overlayId);
-                
+
                 if (overlay) {
                     // Store in cache for future use
                     overlaysCache.set(params.overlayId, overlay);
@@ -1133,7 +1133,7 @@ async function handleApiRequest(req, res) {
                 return;
             }
         }
-        
+
         // Try to get profile data
         if (!psnInitialized) {
             res.setHeader('Content-Type', 'application/json');
@@ -1144,7 +1144,7 @@ async function handleApiRequest(req, res) {
             }));
             return;
         }
-        
+
         try {
             const profileResult = await psnApi.getCompleteProfileData(overlay.psnId);
             if (!profileResult.success) {
@@ -1156,7 +1156,7 @@ async function handleApiRequest(req, res) {
                 }));
                 return;
             }
-            
+
             res.setHeader('Content-Type', 'application/json');
             res.writeHead(200);
             res.end(JSON.stringify({
@@ -1176,7 +1176,7 @@ async function handleApiRequest(req, res) {
             return;
         }
     }
-    
+
     // PSN Stats endpoint for overall trophy information
     if (endpoint === '/api/psn-stats') {
         if (!psnInitialized) {
@@ -1188,15 +1188,15 @@ async function handleApiRequest(req, res) {
             }));
             return;
         }
-        
+
         // Get PSN ID from query or use default
         let psnId = params.psnId;
-        
+
         // If no direct psnId but we have an overlayId, try to get it from the overlay
         if (!psnId && params.overlayId) {
             // First check cache
             let overlay = overlaysCache.get(params.overlayId);
-            
+
             // If not in cache, try database
             if (!overlay) {
                 try {
@@ -1209,13 +1209,13 @@ async function handleApiRequest(req, res) {
                     console.error(`Error retrieving overlay for PSN ID lookup: ${error.message}`);
                 }
             }
-            
+
             // If we found the overlay, use its psnId
             if (overlay) {
                 psnId = overlay.psnId;
             }
         }
-        
+
         if (!psnId) {
             res.setHeader('Content-Type', 'application/json');
             res.writeHead(400);
@@ -1225,7 +1225,7 @@ async function handleApiRequest(req, res) {
             }));
             return;
         }
-        
+
         try {
             const profileResult = await psnApi.getCompleteProfileData(psnId);
             if (!profileResult.success) {
@@ -1237,9 +1237,9 @@ async function handleApiRequest(req, res) {
                 }));
                 return;
             }
-            
+
             const { profile } = profileResult;
-            
+
             // Return trophy stats in the format expected by the original overlay
             res.setHeader('Content-Type', 'application/json');
             res.writeHead(200);
@@ -1269,7 +1269,7 @@ async function handleApiRequest(req, res) {
             return;
         }
     }
-    
+
     // Trophy titles endpoint for a PSN user
     if (endpoint === '/api/trophy-titles') {
         if (!psnInitialized) {
@@ -1281,10 +1281,10 @@ async function handleApiRequest(req, res) {
             }));
             return;
         }
-        
+
         // Get PSN ID from query params
         const psnId = params.psnId;
-        
+
         if (!psnId) {
             res.setHeader('Content-Type', 'application/json');
             res.writeHead(400);
@@ -1294,7 +1294,7 @@ async function handleApiRequest(req, res) {
             }));
             return;
         }
-        
+
         try {
             // Get user trophy titles
             const titlesResult = await psnApi.getUserTrophyTitles(psnId);
@@ -1307,7 +1307,7 @@ async function handleApiRequest(req, res) {
                 }));
                 return;
             }
-            
+
             res.setHeader('Content-Type', 'application/json');
             res.writeHead(200);
             res.end(JSON.stringify(titlesResult));
@@ -1323,7 +1323,7 @@ async function handleApiRequest(req, res) {
             return;
         }
     }
-    
+
     // Trophy summary endpoint for a PSN user
     if (endpoint === '/api/trophy-summary') {
         if (!psnInitialized) {
@@ -1335,10 +1335,10 @@ async function handleApiRequest(req, res) {
             }));
             return;
         }
-        
+
         // Get PSN ID from query params
         const psnId = params.psnId;
-        
+
         if (!psnId) {
             res.setHeader('Content-Type', 'application/json');
             res.writeHead(400);
@@ -1348,7 +1348,7 @@ async function handleApiRequest(req, res) {
             }));
             return;
         }
-        
+
         try {
             // Get user trophy summary
             const summaryResult = await psnApi.getTrophySummary(psnId);
@@ -1361,7 +1361,7 @@ async function handleApiRequest(req, res) {
                 }));
                 return;
             }
-            
+
             res.setHeader('Content-Type', 'application/json');
             res.writeHead(200);
             res.end(JSON.stringify(summaryResult));
@@ -1377,7 +1377,7 @@ async function handleApiRequest(req, res) {
             return;
         }
     }
-    
+
     // PSN Profile endpoint for direct profile retrieval
     if (endpoint === '/api/profile') {
         if (!psnInitialized) {
@@ -1389,10 +1389,10 @@ async function handleApiRequest(req, res) {
             }));
             return;
         }
-        
+
         // Get PSN ID from query params
         const psnId = params.psnId;
-        
+
         if (!psnId) {
             res.setHeader('Content-Type', 'application/json');
             res.writeHead(400);
@@ -1402,7 +1402,7 @@ async function handleApiRequest(req, res) {
             }));
             return;
         }
-        
+
         try {
             // Get user profile 
             const profileResult = await psnApi.getUserProfile(psnId);
@@ -1415,7 +1415,7 @@ async function handleApiRequest(req, res) {
                 }));
                 return;
             }
-            
+
             res.setHeader('Content-Type', 'application/json');
             res.writeHead(200);
             res.end(JSON.stringify(profileResult));
@@ -1431,7 +1431,7 @@ async function handleApiRequest(req, res) {
             return;
         }
     }
-    
+
     // PSN Title endpoint for current game information
     if (endpoint === '/api/psn-title') {
         if (!psnInitialized) {
@@ -1443,15 +1443,15 @@ async function handleApiRequest(req, res) {
             }));
             return;
         }
-        
+
         // Get PSN ID from query or use default
         let psnId = params.psnId;
-        
+
         // If no direct psnId but we have an overlayId, try to get it from the overlay
         if (!psnId && params.overlayId) {
             // First check cache
             let overlay = overlaysCache.get(params.overlayId);
-            
+
             // If not in cache, try database
             if (!overlay) {
                 try {
@@ -1464,13 +1464,13 @@ async function handleApiRequest(req, res) {
                     console.error(`Error retrieving overlay for PSN ID lookup: ${error.message}`);
                 }
             }
-            
+
             // If we found the overlay, use its psnId
             if (overlay) {
                 psnId = overlay.psnId;
             }
         }
-        
+
         if (!psnId) {
             res.setHeader('Content-Type', 'application/json');
             res.writeHead(400);
@@ -1480,7 +1480,7 @@ async function handleApiRequest(req, res) {
             }));
             return;
         }
-        
+
         try {
             const profileResult = await psnApi.getCompleteProfileData(psnId);
             if (!profileResult.success) {
@@ -1492,12 +1492,12 @@ async function handleApiRequest(req, res) {
                 }));
                 return;
             }
-            
+
             const { profile, titles } = profileResult;
-            
+
             // Get the most recently played title (first in the list)
             const latestTitle = titles && titles.length > 0 ? titles[0] : null;
-            
+
             if (!latestTitle) {
                 res.setHeader('Content-Type', 'application/json');
                 res.writeHead(200);
@@ -1512,18 +1512,18 @@ async function handleApiRequest(req, res) {
                 }));
                 return;
             }
-            
+
             // Extract and calculate values in the format expected by the original overlay
             const earnedCount = latestTitle.earnedTrophies?.bronze + 
                                latestTitle.earnedTrophies?.silver + 
                                latestTitle.earnedTrophies?.gold + 
                                latestTitle.earnedTrophies?.platinum || 0;
-            
+
             const totalCount = latestTitle.definedTrophies?.bronze + 
                               latestTitle.definedTrophies?.silver + 
                               latestTitle.definedTrophies?.gold + 
                               latestTitle.definedTrophies?.platinum || 0;
-            
+
             // Calculate completion percentage with correct trophy points
             const bronzePoints = 15;
             const silverPoints = 30;
@@ -1543,7 +1543,7 @@ async function handleApiRequest(req, res) {
             const completionPercentage = totalPoints > 0 
                 ? ((earnedPoints / totalPoints) * 100).toFixed(2) + '%'
                 : '0.00%';
-            
+
             res.setHeader('Content-Type', 'application/json');
             res.writeHead(200);
             res.end(JSON.stringify({
@@ -1567,7 +1567,7 @@ async function handleApiRequest(req, res) {
             return;
         }
     }
-    
+
     // Default JSON error for unknown API endpoints
     res.setHeader('Content-Type', 'application/json');
     res.writeHead(404);
@@ -1580,28 +1580,28 @@ async function handleApiRequest(req, res) {
 // Create the server
 const server = http.createServer(async (req, res) => {
     console.log(`Request received: ${req.method} ${req.url} from ${req.headers['x-forwarded-for'] || req.socket.remoteAddress}`);
-    
+
     // Add CORS headers to allow connections from anywhere
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-    
+
     // Handle OPTIONS preflight requests
     if (req.method === 'OPTIONS') {
         res.writeHead(204);
         res.end();
         return;
     }
-    
+
     const parsedUrl = url.parse(req.url, true);
     const pathname = parsedUrl.pathname;
-    
+
     // Serve static files (images, GIFs, etc.)
     if (pathname.endsWith('.png') || pathname.endsWith('.gif') || pathname.endsWith('.jpg') || pathname.endsWith('.jpeg')) {
         console.log(`Attempting to serve static file: ${pathname}`);
-        
+
         let filePath;
-        
+
         // Check if file is in uploads directory
         if (pathname.startsWith('/uploads/')) {
             filePath = path.join(__dirname, pathname);
@@ -1611,23 +1611,23 @@ const server = http.createServer(async (req, res) => {
             filePath = path.join(__dirname, 'public', pathname);
             console.log(`Looking for file in public: ${filePath}`);
         }
-        
+
         try {
             const fileData = fs.readFileSync(filePath);
             console.log(`Successfully read file: ${pathname}`);
-            
+
             // Set appropriate content type based on file extension
             let contentType = 'application/octet-stream';
             if (pathname.endsWith('.png')) contentType = 'image/png';
             else if (pathname.endsWith('.gif')) contentType = 'image/gif';
             else if (pathname.endsWith('.jpg') || pathname.endsWith('.jpeg')) contentType = 'image/jpeg';
-            
+
             res.setHeader('Content-Type', contentType);
             res.writeHead(200);
             res.end(fileData);
         } catch (error) {
             console.error(`Error serving file ${pathname}:`, error.message);
-            
+
             // Try alternative file name formats (e.g., 40-platinum.png vs trophy-platinum.png)
             if (pathname.startsWith('/trophy-')) {
                 const altPath = path.join(__dirname, 'public', pathname.replace('trophy-', '40-'));
@@ -1641,13 +1641,13 @@ const server = http.createServer(async (req, res) => {
                     console.error(`Alternative file ${altPath} also not found:`, altError.message);
                 }
             }
-            
+
             res.writeHead(404);
             res.end('File not found');
         }
         return;
     }
-    
+
     // Create a simple PSN icon if it doesn't exist
     if (pathname === '/psn-icon.png') {
         try {
@@ -1673,7 +1673,7 @@ const server = http.createServer(async (req, res) => {
         }
         return;
     }
-    
+
     // API routes
     if (pathname.startsWith('/api/')) {
         // Handle file uploads
@@ -1681,11 +1681,11 @@ const server = http.createServer(async (req, res) => {
             await handleFileUpload(req, res);
             return;
         }
-        
+
         await handleApiRequest(req, res);
         return;
     }
-    
+
     // Overlay route
     if (pathname.startsWith('/overlay/')) {
         const overlayId = pathname.split('/')[2];
@@ -1694,15 +1694,15 @@ const server = http.createServer(async (req, res) => {
             res.end('Overlay ID not provided');
             return;
         }
-        
+
         // First look in memory cache
         let overlay = overlaysCache.get(overlayId);
-        
+
         // If not in cache, try to get from database
         if (!overlay) {
             try {
                 overlay = await db.getOverlay(overlayId);
-                
+
                 if (overlay) {
                     // Store in cache for future requests
                     overlaysCache.set(overlayId, overlay);
@@ -1718,13 +1718,13 @@ const server = http.createServer(async (req, res) => {
                 return;
             }
         }
-        
+
         res.setHeader('Content-Type', 'text/html');
         res.writeHead(200);
         res.end(getOverlayHtml(overlay));
         return;
     }
-    
+
     // Home page
     if (pathname === '/') {
         res.setHeader('Content-Type', 'text/html');
@@ -1732,7 +1732,7 @@ const server = http.createServer(async (req, res) => {
         res.end(getHomePageHtml(psnInitialized));
         return;
     }
-    
+
     // 404 for everything else
     res.writeHead(404);
     res.end('Not found');
@@ -1744,28 +1744,28 @@ server.listen(PORT, '0.0.0.0', async () => {
     console.log(`Server started at ${new Date().toISOString()}`);
     console.log(`Listening on all interfaces (0.0.0.0:${PORT})`);
     console.log(`Access the application at: http://localhost:${PORT}/`);
-    
+
     // Initialize database
     try {
         console.log('Initializing database...');
         await db.initializeDatabase();
         console.log('Database initialized successfully');
-        
+
         // Check for existing overlays in the database
         try {
             const result = await db.query('SELECT COUNT(*) FROM overlays');
             const count = parseInt(result.rows[0].count);
             console.log(`Found ${count} existing overlays in the database`);
-            
+
             if (count > 0) {
                 // Get a sample of overlays to verify data structure
                 const sampleResult = await db.query('SELECT id, psn_id FROM overlays LIMIT 5');
                 console.log('Sample overlays:', sampleResult.rows);
-                
+
                 // Load existing overlays into memory cache
                 const allOverlays = await db.query('SELECT * FROM overlays');
                 console.log(`Found ${allOverlays.rows.length} overlays in database`);
-                
+
                 allOverlays.rows.forEach(row => {
                     // Transform database column names to camelCase for consistency with our code
                     const overlay = {
@@ -1777,25 +1777,25 @@ server.listen(PORT, '0.0.0.0', async () => {
                         trophyGifPath: row.trophy_gif_path,
                         createdAt: row.created_at
                     };
-                    
+
                     // Log each overlay's details
                     console.log(`Loading overlay ${row.id} with PSN ID: ${row.psn_id}`);
-                    
+
                     if (row.profile_pic_path) {
                         console.log(`  Profile picture path: ${row.profile_pic_path}`);
                     } else {
                         console.log('  No profile picture set');
                     }
-                    
+
                     if (row.trophy_gif_path) {
                         console.log(`  Trophy GIF path: ${row.trophy_gif_path}`);
                     } else {
                         console.log('  No trophy GIF set');
                     }
-                    
+
                     overlaysCache.set(row.id, overlay);
                 });
-                
+
                 console.log(`Successfully loaded ${allOverlays.rows.length} overlays into memory cache`);
             }
         } catch (error) {
@@ -1804,7 +1804,7 @@ server.listen(PORT, '0.0.0.0', async () => {
     } catch (error) {
         console.error('Failed to initialize database:', error);
     }
-    
+
     // Initialize PSN API
     console.log('Initializing PSN API with NPSSO code');
     const psnStatus = await initializePSN();
@@ -1818,7 +1818,7 @@ async function handleFileUpload(req, res) {
         keepExtensions: true,
         maxFileSize: 5 * 1024 * 1024 // 5MB limit
     });
-    
+
     form.parse(req, async (err, fields, files) => {
         if (err) {
             console.error('Error parsing form data:', err);
@@ -1830,7 +1830,7 @@ async function handleFileUpload(req, res) {
             }));
             return;
         }
-        
+
         console.log('Parsed form data:', { 
             fields: Object.keys(fields), 
             fieldValues: fields,
@@ -1840,11 +1840,11 @@ async function handleFileUpload(req, res) {
                 type: files[key] ? (files[key].mimetype || 'unknown') : 'none'
             }))
         });
-        
+
         // Check for overlay ID
         const overlayId = Array.isArray(fields.overlayId) ? fields.overlayId[0] : fields.overlayId;
         console.log('Overlay ID from form:', overlayId);
-        
+
         if (!overlayId) {
             console.error('No overlay ID provided in upload');
             res.setHeader('Content-Type', 'application/json');
@@ -1855,10 +1855,10 @@ async function handleFileUpload(req, res) {
             }));
             return;
         }
-        
+
         // Retrieve overlay data (first from cache, then from database)
         let overlay = overlaysCache.get(overlayId);
-        
+
         // If not in cache, try to get from database
         if (!overlay) {
             try {
@@ -1871,9 +1871,9 @@ async function handleFileUpload(req, res) {
                 console.error(`Error retrieving overlay from database: ${error.message}`);
             }
         }
-        
+
         console.log('Overlay found:', !!overlay, 'Overlay ID:', overlayId);
-        
+
         if (!overlay) {
             console.error(`Overlay ${overlayId} not found in storage or database`);
             console.log('Available overlays in cache:', Array.from(overlaysCache.keys()));
@@ -1885,26 +1885,26 @@ async function handleFileUpload(req, res) {
             }));
             return;
         }
-        
+
         // Process profile picture if uploaded
         // Check for both 'profilePic' and 'file' with fileType='profile'
         const fileTypeValue = fields.fileType && Array.isArray(fields.fileType) ? fields.fileType[0] : fields.fileType;
         console.log('File type value:', fileTypeValue);
-        
+
         if (files.profilePic || (files.file && fileTypeValue === 'profile')) {
             const profilePicFile = files.profilePic || files.file;
             console.log('Profile pic file details:', JSON.stringify(profilePicFile, null, 2));
-            
+
             // Handle the file as either an object or array
             const fileObj = Array.isArray(profilePicFile) ? profilePicFile[0] : profilePicFile;
             console.log('File object keys:', Object.keys(fileObj || {}));
             console.log('File object filepath exists:', fileObj && !!fileObj.filepath);
             console.log('File object path exists:', fileObj && !!fileObj.path);
-            
+
             // Check for both filepath (newer formidable) and path (older formidable)
             if (fileObj && (fileObj.filepath || fileObj.path)) {
                 const profilePicPath = fileObj.filepath || fileObj.path;
-                
+
                 // Get the file extension safely
                 let fileExt = '.png';  // Default extension
                 if (fileObj.originalFilename) {
@@ -1918,15 +1918,15 @@ async function handleFileUpload(req, res) {
                     };
                     fileExt = mimeMap[fileObj.mimetype] || '.png';
                 }
-                
+
                 const newPath = path.join(__dirname, 'uploads', 'profiles', `${overlayId}${fileExt}`);
-                
+
                 try {
                     // Ensure directory exists
                     if (!fs.existsSync(path.join(__dirname, 'uploads', 'profiles'))) {
                         fs.mkdirSync(path.join(__dirname, 'uploads', 'profiles'), { recursive: true });
                     }
-                    
+
                     fs.renameSync(profilePicPath, newPath);
                     const updatedPath = `/uploads/profiles/${overlayId}${fileExt}`;
                     overlay.profilePicPath = updatedPath;
@@ -1938,49 +1938,49 @@ async function handleFileUpload(req, res) {
                 console.error('Invalid profile picture file object');
             }
         }
-        
+
         // Process trophy GIF if uploaded
         // Check for both 'trophyGif' and 'file' with fileType='trophy'
         if (files.trophyGif || (files.file && fileTypeValue === 'trophy')) {
             const trophyGifFile = files.trophyGif || files.file;
             console.log('Trophy GIF file details:', JSON.stringify(trophyGifFile, null, 2));
-            
+
             // Handle the file as either an object or array
             const fileObj = Array.isArray(trophyGifFile) ? trophyGifFile[0] : trophyGifFile;
             console.log('Trophy GIF file object keys:', Object.keys(fileObj || {}));
             console.log('Trophy GIF file object filepath exists:', fileObj && !!fileObj.filepath);
             console.log('Trophy GIF file object path exists:', fileObj && !!fileObj.path);
-            
+
             // Check for both filepath (newer formidable) and path (older formidable)
             if (fileObj && (fileObj.filepath || fileObj.path)) {
                 const trophyGifPath = fileObj.filepath || fileObj.path;
-                
+
                 // Check if this is actually a GIF file
                 let isGif = false;
                 let fileExt = '.gif';  // Always use .gif for trophy animations
-                
+
                 if (fileObj.mimetype) {
                     isGif = fileObj.mimetype === 'image/gif';
                 } else if (fileObj.originalFilename) {
                     isGif = path.extname(fileObj.originalFilename).toLowerCase() === '.gif';
                 }
-                
+
                 console.log(`Trophy file is GIF: ${isGif}, original mimetype: ${fileObj.mimetype}`);
-                
+
                 // Always save trophy animations with .gif extension
                 const newPath = path.join(__dirname, 'uploads', 'gifs', `${overlayId}${fileExt}`);
-                
+
                 try {
                     // Ensure directory exists
                     if (!fs.existsSync(path.join(__dirname, 'uploads', 'gifs'))) {
                         fs.mkdirSync(path.join(__dirname, 'uploads', 'gifs'), { recursive: true });
                     }
-                    
+
                     fs.renameSync(trophyGifPath, newPath);
                     const updatedPath = `/uploads/gifs/${overlayId}${fileExt}`;
                     overlay.trophyGifPath = updatedPath;
                     console.log(`Saved trophy GIF for overlay ${overlayId} at path: ${updatedPath}`);
-                    
+
                     // Add warning if not actually a GIF
                     if (!isGif) {
                         console.warn(`Warning: Trophy animation for ${overlayId} may not be a proper GIF file`);
@@ -1992,10 +1992,10 @@ async function handleFileUpload(req, res) {
                 console.error('Invalid trophy GIF file object');
             }
         }
-        
+
         // Update overlay in memory cache
         overlaysCache.set(overlayId, overlay);
-        
+
         // Update overlay in database
         try {
             // Prepare update data with only the fields that need to be updated
@@ -2008,7 +2008,7 @@ async function handleFileUpload(req, res) {
                 updateData.trophyGifPath = overlay.trophyGifPath;
                 console.log(`Setting trophy GIF path for overlay ${overlayId} to: ${overlay.trophyGifPath}`);
             }
-            
+
             // Only update if there's something to update
             if (Object.keys(updateData).length > 0) {
                 console.log(`Updating overlay ${overlayId} in database with data:`, updateData);
@@ -2017,7 +2017,7 @@ async function handleFileUpload(req, res) {
             } else {
                 console.log(`No fields to update for overlay ${overlayId}`);
             }
-            
+
             // Return success
             res.setHeader('Content-Type', 'application/json');
             res.writeHead(200);
@@ -2027,7 +2027,7 @@ async function handleFileUpload(req, res) {
             }));
         } catch (error) {
             console.error(`Error updating overlay in database: ${error.message}`);
-            
+
             // Still return success since files were saved, even if database update failed
             res.setHeader('Content-Type', 'application/json');
             res.writeHead(200);
