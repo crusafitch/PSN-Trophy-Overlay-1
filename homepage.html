@@ -120,6 +120,14 @@
                     <label for="levelColor">Level Indicator Color:</label>
                     <input type="color" id="levelColor" value="#FFD700">
                 </div>
+
+                <div class="form-group">
+                    <label for="overlayPosition">Overlay Position:</label>
+                    <select id="overlayPosition" class="form-control">
+                        <option value="bottom">Bottom</option>
+                        <option value="top">Top</option>
+                    </select>
+                </div>
                 
                 <button id="createBtn">Create Overlay</button>
             </div>
@@ -137,6 +145,7 @@
                 const psnId = document.getElementById('psnId').value;
                 const progressColor = document.getElementById('progressColor').value;
                 const levelColor = document.getElementById('levelColor').value;
+                const position = document.getElementById('overlayPosition').value;
                 
                 if (!psnId) {
                     alert('Please enter your PSN ID');
