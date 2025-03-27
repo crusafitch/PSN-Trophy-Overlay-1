@@ -1524,20 +1524,18 @@ async function handleApiRequest(req, res) {
                               latestTitle.definedTrophies?.gold + 
                               latestTitle.definedTrophies?.platinum || 0;
             
-            // Calculate PSN-style completion percentage
-            const platinumPoints = 300;
-            const goldPoints = 30;
-            const silverPoints = 15;
-            const bronzePoints = 5;
+            // Calculate completion percentage with correct trophy points
+            const bronzePoints = 15;
+            const silverPoints = 30;
+            const goldPoints = 90;
+            // Platinum not included in calculation
 
             const earnedPoints = 
-                (latestTitle.earnedTrophies?.platinum || 0) * platinumPoints +
                 (latestTitle.earnedTrophies?.gold || 0) * goldPoints +
                 (latestTitle.earnedTrophies?.silver || 0) * silverPoints +
                 (latestTitle.earnedTrophies?.bronze || 0) * bronzePoints;
 
             const totalPoints = 
-                (latestTitle.definedTrophies?.platinum || 0) * platinumPoints +
                 (latestTitle.definedTrophies?.gold || 0) * goldPoints +
                 (latestTitle.definedTrophies?.silver || 0) * silverPoints +
                 (latestTitle.definedTrophies?.bronze || 0) * bronzePoints;
