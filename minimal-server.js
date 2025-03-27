@@ -537,19 +537,19 @@ function getOverlayHtml(overlayData) {
       transform: translateY(-50%);
       width: 6px;
       height: 15px;
-      background: #ff3333;
+      background: var(--progress-color);
       border-radius: 3px;
       box-shadow: 
-        0 0 5px #ff3333,
-        0 0 10px #ff3333,
-        0 0 15px #ff3333;
+        0 0 5px var(--progress-color),
+        0 0 10px var(--progress-color),
+        0 0 15px var(--progress-color);
       animation: glow 1s ease-in-out infinite alternate;
     }
     @keyframes glow {
       from {
         opacity: 0.7;
         box-shadow: 
-          0 0 5px #ff3333,
+          0 0 5px var(--progress-color)33,
           0 0 10px #ff3333,
           0 0 15px #ff3333;
       }
