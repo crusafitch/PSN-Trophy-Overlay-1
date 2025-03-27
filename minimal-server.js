@@ -1524,26 +1524,26 @@ async function handleApiRequest(req, res) {
                               latestTitle.definedTrophies?.gold + 
                               latestTitle.definedTrophies?.platinum || 0;
             
-            // Calculate weighted completion percentage
-            const platinumWeight = 180;
-            const goldWeight = 90;
-            const silverWeight = 30;
-            const bronzeWeight = 15;
-            
-            const earnedWeight = 
-                (latestTitle.earnedTrophies?.platinum || 0) * platinumWeight +
-                (latestTitle.earnedTrophies?.gold || 0) * goldWeight +
-                (latestTitle.earnedTrophies?.silver || 0) * silverWeight +
-                (latestTitle.earnedTrophies?.bronze || 0) * bronzeWeight;
-            
-            const totalWeight = 
-                (latestTitle.definedTrophies?.platinum || 0) * platinumWeight +
-                (latestTitle.definedTrophies?.gold || 0) * goldWeight +
-                (latestTitle.definedTrophies?.silver || 0) * silverWeight +
-                (latestTitle.definedTrophies?.bronze || 0) * bronzeWeight;
-            
-            const completionPercentage = totalWeight > 0 
-                ? ((earnedWeight / totalWeight) * 100).toFixed(2) + '%'
+            // Calculate PSN-style completion percentage
+            const platinumPoints = 300;
+            const goldPoints = 90;
+            const silverPoints = 30;
+            const bronzePoints = 15;
+
+            const earnedPoints = 
+                (latestTitle.earnedTrophies?.platinum || 0) * platinumPoints +
+                (latestTitle.earnedTrophies?.gold || 0) * goldPoints +
+                (latestTitle.earnedTrophies?.silver || 0) * silverPoints +
+                (latestTitle.earnedTrophies?.bronze || 0) * bronzePoints;
+
+            const totalPoints = 
+                (latestTitle.definedTrophies?.platinum || 0) * platinumPoints +
+                (latestTitle.definedTrophies?.gold || 0) * goldPoints +
+                (latestTitle.definedTrophies?.silver || 0) * silverPoints +
+                (latestTitle.definedTrophies?.bronze || 0) * bronzePoints;
+
+            const completionPercentage = totalPoints > 0 
+                ? ((earnedPoints / totalPoints) * 100).toFixed(2) + '%'
                 : '0.00%';
             
             res.setHeader('Content-Type', 'application/json');
