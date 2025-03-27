@@ -66,22 +66,6 @@
             border-radius: 5px;
             background-color: #3a3a3a;
         }
-
-        select {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #3a3a3a;
-            color: white;
-            margin-bottom: 10px;
-            cursor: pointer;
-        }
-
-        select:focus {
-            outline: none;
-            box-shadow: 0 0 0 2px #2d7fea;
-        }
     </style>
 </head>
 <body>
@@ -110,21 +94,6 @@
     </div>
 
     <script>
-        const positionSelect = document.getElementById('position');
-        const statusMsg = document.getElementById('statusMsg');
-
-        // Load saved position from localStorage if exists
-        const savedPosition = localStorage.getItem('overlayPosition');
-        if (savedPosition) {
-            positionSelect.value = savedPosition;
-        }
-
-        // Save position when changed
-        positionSelect.addEventListener('change', function() {
-            localStorage.setItem('overlayPosition', this.value);
-            statusMsg.textContent = `Position set to: ${this.value}`;
-        });
-
         document.getElementById('trackBtn').addEventListener('click', function() {
             const psnId = document.getElementById('psnId').value;
             if (!psnId) {
