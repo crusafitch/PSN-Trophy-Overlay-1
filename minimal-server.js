@@ -162,6 +162,12 @@ function getHomePageHtml(psnStatus) {
                 transform: translateY(2px);
                 box-shadow: 0 2px 0 #5c0000;
             }
+            button:disabled {
+                background-color: #666;
+                cursor: not-allowed;
+                transform: none;
+                box-shadow: none;
+            }
             .status {
                 padding: 15px;
                 border-radius: 5px;
@@ -330,6 +336,21 @@ function getHomePageHtml(psnStatus) {
         </div>
 
         <script>
+            // Form elements
+            const createBtn = document.getElementById('createBtn');
+            const psnIdInput = document.getElementById('psnId');
+            const progressColorInput = document.getElementById('progressColor');
+            const profilePicInput = document.getElementById('profilePic');
+            const trophyGifInput = document.getElementById('trophyGif');
+
+            // Enable/disable button based on PSN ID
+            psnIdInput.addEventListener('input', () => {
+                createBtn.disabled = !psnIdInput.value.trim();
+            });
+
+            // Initialize button state
+            createBtn.disabled = !psnIdInput.value.trim();
+
             // Validate that uploaded trophy files are GIF format
             function validateGifFile(fileInput) {
                 const file = fileInput.files[0];
