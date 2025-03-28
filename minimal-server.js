@@ -1051,8 +1051,9 @@ async function handleApiRequest(req, res) {
 
     // Create overlay endpoint
     if (endpoint === '/api/create-overlay') {
+        res.setHeader('Content-Type', 'application/json');
+        
         if (!params.psnId) {
-            res.setHeader('Content-Type', 'application/json');
             res.writeHead(400);
             res.end(JSON.stringify({
                 success: false,
