@@ -397,6 +397,7 @@
     // Store these values in localStorage so they persist across refreshes
     let previousGameEarned = parseInt(localStorage.getItem('previousGameEarned')) || 0;
     let previousLevel = parseInt(localStorage.getItem('previousLevel')) || 0;
+    let previousGameTitle = localStorage.getItem('previousGameTitle');
     let lastCompletion = localStorage.getItem('lastCompletion');
     const overlayId = '2f5dfbb7-34d5-4fd3-b9bf-fb3ad2b9ac15';
     let overlayConfig = {}; //Added to store configuration
@@ -437,18 +438,24 @@
 
         // Trigger animations if new trophies were earned
         console.log("Trophy check - Previous:", previousGameEarned, "Current:", data.earnedTrophies);
-        // Initialize on first load or trigger on trophy increase
-        if (previousGameEarned === null) {
+        // Initialize on first load or trigger on trophy increase/game change
+        if (previousGameEarned === null || previousGameTitle === null) {
           previousGameEarned = data.earnedTrophies;
-        } else if (data.earnedTrophies > previousGameEarned) {
-          console.log("Trophy earned! Triggering animations");
+          previousGameTitle = data.titleName;
           localStorage.setItem('previousGameEarned', data.earnedTrophies);
+          localStorage.setItem('previousGameTitle', data.titleName);
+        } else if (data.earnedTrophies > previousGameEarned || 
+                  (data.titleName !== previousGameTitle && data.earnedTrophies > 0)) {
+          console.log("Trophy earned or new game trophy! Triggering animations");
+          localStorage.setItem('previousGameEarned', data.earnedTrophies);
+          localStorage.setItem('previousGameTitle', data.titleName);
+          previousGameEarned = data.earnedTrophies;
+          previousGameTitle = data.titleName;
           const progressBar = document.querySelector('.mini-progress-fill');
           const rect = progressBar.getBoundingClientRect();
           showAchievementAnimations(rect);
         }
 
-        previousGameEarned = data.earnedTrophies;
       } catch (error) {
         console.error("Error fetching game data:", error);
       }
@@ -617,9 +624,10 @@
     // Periodic refresh (every 60 seconds)
     setInterval(async () => {
       const prevEarned = previousGameEarned;
+      const prevTitle = previousGameTitle;
       await fetchGameData();
       // Only trigger animation if trophies actually increased
-      if (prevEarned !== null && previousGameEarned > prevEarned) {
+      if (prevEarned !== null && (previousGameEarned > prevEarned || previousGameTitle !== prevTitle)) {
         const progressBar = document.querySelector('.mini-progress-fill');
         const rect = progressBar.getBoundingClientRect();
         showAchievementAnimations(rect);
