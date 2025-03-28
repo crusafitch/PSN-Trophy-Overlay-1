@@ -43,22 +43,15 @@ async function createOverlay(overlayData) {
   const { id, psnId, progressColor, levelColor } = overlayData;
 
   try {
-    await db.exec('BEGIN');
-    
-    // Remove any existing overlay for this PSN ID
-    await db.run('DELETE FROM overlays WHERE psn_id = ?', [psnId]);
-    
     // Create the new overlay
     const result = await db.run(
       'INSERT INTO overlays (id, psn_id, progress_color, level_color) VALUES (?, ?, ?, ?)',
       [id, psnId, progressColor, levelColor]
     );
     
-    await db.exec('COMMIT');
     console.log(`Created overlay for PSN ID: ${psnId} with ID: ${id}`);
     return { id, psnId, progressColor, levelColor };
   } catch (error) {
-    await db.exec('ROLLBACK');
     console.error('Error creating overlay:', error);
     throw error;
   }
