@@ -620,10 +620,9 @@
     // Periodic refresh (every 60 seconds)
     setInterval(async () => {
       const prevEarned = previousGameEarned;
-      const prevTitle = previousGameTitle;
       await fetchGameData();
-      // Only trigger animation if trophies actually increased
-      if (prevEarned !== null && (previousGameEarned > prevEarned || previousGameTitle !== prevTitle)) {
+      // Only trigger animation if trophies have increased
+      if (prevEarned !== null && previousGameEarned > prevEarned) {
         const progressBar = document.querySelector('.mini-progress-fill');
         const rect = progressBar.getBoundingClientRect();
         showAchievementAnimations(rect);
