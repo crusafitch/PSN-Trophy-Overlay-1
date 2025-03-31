@@ -90,11 +90,11 @@
     }
     .mini-progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, var(--progress-color), var(--progress-color));
+      background: linear-gradient(90deg, var(--progress-color, #ffffff), var(--progress-color, #ffffff));
       width: 0%;
       border-radius: 3px;
       transition: width 0.5s ease;
-      box-shadow: 0 0 5px var(--progress-color);
+      box-shadow: 0 0 5px var(--progress-color, #ffffff);
       position: relative;
       overflow: visible;
     }
@@ -106,9 +106,9 @@
       transform: translateY(-50%);
       width: 6px;
       height: 15px;
-      background: currentColor;
+      background: var(--progress-color, #ffffff);
       border-radius: 3px;
-      box-shadow: 0 0 8px var(--progress-color, currentColor);
+      box-shadow: 0 0 8px var(--progress-color, #ffffff);
     }
     @keyframes glow {
       from {
@@ -293,9 +293,9 @@
       margin-left: 85px;
       padding: 4px 8px;
       background: linear-gradient(45deg, #2a2a2a, #4a4a4a);
-      border: 2px solid var(--progress-color, #ffdd00); /* Changed from hardcoded red */
+      border: 2px solid var(--progress-color, #ffffff);
       border-radius: 12px;
-      box-shadow: 0 0 10px rgba(139, 0, 0, 0.3); /* Changed from hardcoded red */
+      box-shadow: 0 0 10px var(--progress-color, #ffffff);
       font-family: 'Press Start 2P', monospace;
       font-size: 14px;
     }
