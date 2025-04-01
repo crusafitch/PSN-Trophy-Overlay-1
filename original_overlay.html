@@ -28,11 +28,6 @@
       position: fixed;
       bottom: 0;
       left: 0;
-      transition: top 0.3s, bottom 0.3s;
-    }
-    body.position-top .bottom-bar {
-      bottom: auto;
-      top: 0;
     }
     /* LEFT GROUP: Game Info */
     .left-group {
@@ -105,13 +100,32 @@
       position: absolute;
       right: -2px;
       top: 50%;
-      transform: translateY(-50%) rotate(45deg);
+      transform: translateY(-50%);
       width: 6px;
       height: 15px;
       background: var(--progress-color);
       border-radius: 3px;
-      box-shadow: none;
-      animation: none;
+      box-shadow: 
+        0 0 5px var(--progress-color),
+        0 0 10px var(--progress-color),
+        0 0 15px var(--progress-color);
+      animation: glow 1s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from {
+        opacity: 0.7;
+        box-shadow: 
+          0 0 5px #ff3333,
+          0 0 10px #ff3333,
+          0 0 15px #ff3333;
+      }
+      to {
+        opacity: 1;
+        box-shadow: 
+          0 0 10px #ff3333,
+          0 0 20px #ff3333,
+          0 0 30px #ff3333;
+      }
     }
     .mini-progress-fill::after {
       content: '';
@@ -141,15 +155,9 @@
       height: 200px;
       object-fit: contain;
       position: fixed;
+      bottom: 40px;
       left: 20px;
       z-index: 1000;
-      transition: top 0.3s, bottom 0.3s;
-    }
-    body.position-top #bar-gif {
-      top: 40px;
-    }
-    body.position-bottom #bar-gif {
-      bottom: 40px;
     }
 
     /* Particle effects */
@@ -157,19 +165,19 @@
       position: absolute;
       width: 12px;
       height: 12px;
-      background: var(--progress, var(--progress-color));
+      background: #ff3333;
       border-radius: 50%;
       pointer-events: none;
       z-index: 1000;
-      box-shadow: 0 0 15px var(--progress, var(--progress-color));
+      box-shadow: 0 0 15px #ff3333;
       opacity: 0.9;
     }
 
     @keyframes xpTextAnim {
-      0% { transform: translateX(0) scale(0.8); opacity: 0; text-shadow: 0 0 5px var(--progress-color); }
-      20% { transform: translateX(5px) scale(1.2); opacity: 1; text-shadow: 0 0 10px var(--progress-color); }
-      50% { transform: translateX(5px) scale(1); opacity: 1; text-shadow: 0 0 8px var(--progress-color); }
-      100% { transform: translateX(10px) scale(0.8); opacity: 0; text-shadow: 0 0 5px var(--progress-color); }
+      0% { transform: translateX(0) scale(0.8); opacity: 0; }
+      20% { transform: translateX(5px) scale(1.2); opacity: 1; }
+      50% { transform: translateX(5px) scale(1); opacity: 1; }
+      100% { transform: translateX(10px) scale(0.8); opacity: 0; }
     }
 
     @keyframes gradientBG {
@@ -239,12 +247,12 @@
       background: linear-gradient(45deg, #2a2a2a, #4a4a4a);
       border: 2px solid var(--progress-color);
       border-radius: 12px;
-      box-shadow: 0 0 10px var(--progress-color);
+      box-shadow: 0 0 10px var(--progress-color, rgba(139, 0, 0, 0.3));
       font-family: 'Press Start 2P', monospace;
       font-size: 14px;
     }
     .level-badge span {
-      color: var(--progress-color);
+      color: #ff3333;
       text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.8);
     }
 
@@ -264,7 +272,7 @@
     }
 
     .test-button:hover {
-      background: var(--progress-color);
+      background: #ff3333;
       transform: scale(1.05);
     }
   </style>
@@ -320,19 +328,6 @@
 
   <!-- Test Button -->
   <button id="test-achievement" class="test-button">Test Achievement</button>
-
-  <select class="overlay-position-select" id="overlayPositionSelect">
-    <option value="bottom">Bottom</option>
-    <option value="top">Top</option>
-  </select>
-
-  <style>
-    .overlay-position-select {
-      position: fixed;
-      top: 10px;
-      right: 10px;
-    }
-  </style>
 
   <script>
     // Store these values in localStorage so they persist across refreshes
@@ -480,17 +475,17 @@
 
 
     let animationInProgress = false;
-
+    
     function showAchievementAnimations(rect) {
       if (animationInProgress) return;
       animationInProgress = true;
-
+      
       console.log("Showing achievement animations");
-
+      
       // Remove any existing animations
       const existingGif = document.getElementById('bar-gif');
       if (existingGif) existingGif.remove();
-
+      
       // Show trophy GIF
       const gif = document.createElement('img');
       gif.src = "/giphy (1).gif";
@@ -506,7 +501,7 @@
         z-index: 1000;
       `;
       document.body.appendChild(gif);
-
+      
       // Show +XP! text
       const xpText = document.createElement('div');
       xpText.textContent = '+XP!';
@@ -525,12 +520,12 @@
       xpText.style.animation = 'xpTextAnim 1.5s ease-out forwards';
       xpText.style.zIndex = '1000';
       document.querySelector('.bottom-bar').appendChild(xpText);
-
+      
       // Create particles
       for (let i = 0; i < 10; i++) {
         createParticle(rect.right, rect.top + rect.height / 2);
       }
-
+      
       setTimeout(() => {
         gif.remove();
         xpText.remove();
@@ -556,14 +551,6 @@
       const progressBar = document.querySelector('.mini-progress-fill');
       const rect = progressBar.getBoundingClientRect();
       showAchievementAnimations(rect);
-    });
-
-    //Initial Overlay Position Handling
-    const overlayPositionSelect = document.getElementById('overlayPositionSelect');
-    overlayPositionSelect.addEventListener('change', () => {
-        const selectedPosition = overlayPositionSelect.value;
-        document.body.classList.remove('position-top', 'position-bottom');
-        document.body.classList.add(`position-${selectedPosition}`);
     });
 
     fetchAllData();

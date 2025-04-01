@@ -1,177 +1,163 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>PSN Trophy Tracker</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #1f1f1f;
-            color: white;
-            margin: 0;
-            padding: 20px;
-        }
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            background-color: #2a2a2a;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-        }
-        h1, h2 {
-            color: #2d7fea;
-        }
-        p {
-            margin: 10px 0;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            background-color: #3a3a3a;
-            color: white;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #2d7fea;
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            transition: background-color 0.3s;
-        }
-        button:hover {
-            background-color: #1c6fd6;
-        }
-        .status {
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #3a3a3a;
-            margin-top: 20px;
-        }
-        .result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 5px;
-            background-color: #3a3a3a;
-            display: none;
-        }
-        .api-status {
-            display: inline-block;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 5px;
-        }
-        .api-status.online {
-            background-color: #4CAF50;
-        }
-        .api-status.offline {
-            background-color: #F44336;
-        }
-        code {
-            display: block;
-            padding: 10px;
-            background-color: #1a1a1a;
-            border-radius: 5px;
-            overflow-x: auto;
-            margin-top: 10px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>PSN Trophy Tracker</h1>
 
-        <div class="status">
-            <span class="api-status online"></span>
-            PSN API Status: Connected
-        </div>
-
-        <div class="form-group">
-            <h2>Create Trophy Overlay</h2>
-            <p>Enter your PSN ID to generate a unique browser source URL for OBS.</p>
-
-            <div class="form-group">
-                <label for="psnId">PSN ID:</label>
-                <input type="text" id="psnId" placeholder="Your PlayStation Network ID">
-            </div>
-
-            <div class="form-group">
-                <label for="progressColor">Progress Bar Color:</label>
-                <input type="color" id="progressColor" value="#ff0000">
-            </div>
-
-            <div class="form-group">
-                <label for="position">Overlay Position:</label>
-                <select id="position" name="position" class="form-control">
-                    <option value="bottom">Bottom</option>
-                    <option value="top">Top</option>
-                </select>
-                <p class="hint">Choose where the overlay appears on screen</p>
-            </div>
-
-            <div class="form-group">
-                <label for="trophyGif">Custom Trophy Animation (optional):</label>
-                <input type="file" id="trophyGif" accept="image/gif">
-                <p class="hint">This GIF will play when you earn a new trophy (only GIF files allowed)</p>
-            </div>
-
-            <div class="form-group">
-                <label for="profilePic">Custom Profile Picture (optional):</label>
-                <input type="file" id="profilePic" accept="image/*">
-            </div>
-
-            <button id="createBtn">Create Overlay</button>
-        </div>
-
-        <div class="result" id="result">
-            <h2>Your Overlay URL</h2>
-            <p>Use this URL as a browser source in OBS Studio:</p>
-            <code id="overlayUrl"></code>
-            <p>Your overlay will automatically update with your latest trophy data.</p>
-        </div>
-    </div>
-
-    <script>
-        document.getElementById('createBtn').addEventListener('click', async function() {
-            const psnId = document.getElementById('psnId').value;
-            const progressColor = document.getElementById('progressColor').value;
-            const levelColor = document.getElementById('levelColor').value;
-            const position = document.getElementById('position').value;
-
-            if (!psnId) {
-                alert('Please enter your PSN ID');
-                return;
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>PSN Trophy Tracker</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #1f1f1f;
+                color: white;
+                margin: 0;
+                padding: 20px;
             }
-
-            try {
-                const response = await fetch(`/api/create-overlay?psnId=${encodeURIComponent(psnId)}&progressColor=${encodeURIComponent(progressColor)}&levelColor=${encodeURIComponent(levelColor)}&position=${encodeURIComponent(position)}`);
-                const data = await response.json();
-
-                if (data.success) {
-                    document.getElementById('overlayUrl').textContent = window.location.origin + '/overlay/' + data.overlayId;
-                    document.getElementById('result').style.display = 'block';
-                } else {
-                    alert('Error: ' + data.error);
+            .container {
+                max-width: 800px;
+                margin: 20px auto;
+                background-color: #2a2a2a;
+                padding: 30px;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            }
+            h1, h2 {
+                color: #2d7fea;
+            }
+            p {
+                margin: 10px 0;
+            }
+            .form-group {
+                margin-bottom: 20px;
+            }
+            label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+            }
+            input, select {
+                width: 100%;
+                padding: 10px;
+                border: none;
+                border-radius: 5px;
+                background-color: #3a3a3a;
+                color: white;
+                box-sizing: border-box;
+            }
+            button {
+                background-color: #2d7fea;
+                color: white;
+                border: none;
+                padding: 12px 20px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-weight: bold;
+                transition: background-color 0.3s;
+            }
+            button:hover {
+                background-color: #1c6fd6;
+            }
+            .status {
+                padding: 10px;
+                border-radius: 5px;
+                background-color: #3a3a3a;
+                margin-top: 20px;
+            }
+            .result {
+                margin-top: 20px;
+                padding: 15px;
+                border-radius: 5px;
+                background-color: #3a3a3a;
+                display: none;
+            }
+            .api-status {
+                display: inline-block;
+                width: 10px;
+                height: 10px;
+                border-radius: 50%;
+                margin-right: 5px;
+            }
+            .api-status.online {
+                background-color: #4CAF50;
+            }
+            .api-status.offline {
+                background-color: #F44336;
+            }
+            code {
+                display: block;
+                padding: 10px;
+                background-color: #1a1a1a;
+                border-radius: 5px;
+                overflow-x: auto;
+                margin-top: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>PSN Trophy Tracker</h1>
+            
+            <div class="status">
+                <span class="api-status online"></span>
+                PSN API Status: Connected
+            </div>
+            
+            <div class="form-group">
+                <h2>Create Trophy Overlay</h2>
+                <p>Enter your PSN ID to generate a unique browser source URL for OBS.</p>
+                
+                <div class="form-group">
+                    <label for="psnId">PSN ID:</label>
+                    <input type="text" id="psnId" placeholder="Your PlayStation Network ID">
+                </div>
+                
+                <div class="form-group">
+                    <label for="progressColor">Progress Bar Color:</label>
+                    <input type="color" id="progressColor" value="#2d7fea">
+                </div>
+                
+                <div class="form-group">
+                    <label for="levelColor">Level Indicator Color:</label>
+                    <input type="color" id="levelColor" value="#FFD700">
+                </div>
+                
+                <button id="createBtn">Create Overlay</button>
+            </div>
+            
+            <div class="result" id="result">
+                <h2>Your Overlay URL</h2>
+                <p>Use this URL as a browser source in OBS Studio:</p>
+                <code id="overlayUrl"></code>
+                <p>Your overlay will automatically update with your latest trophy data.</p>
+            </div>
+        </div>
+        
+        <script>
+            document.getElementById('createBtn').addEventListener('click', async function() {
+                const psnId = document.getElementById('psnId').value;
+                const progressColor = document.getElementById('progressColor').value;
+                const levelColor = document.getElementById('levelColor').value;
+                
+                if (!psnId) {
+                    alert('Please enter your PSN ID');
+                    return;
                 }
-            } catch (error) {
-                alert('Error creating overlay: ' + error.message);
-            }
-        });
-    </script>
-</body>
-</html>
+                
+                try {
+                    const response = await fetch(`/api/create-overlay?psnId=${encodeURIComponent(psnId)}&progressColor=${encodeURIComponent(progressColor)}&levelColor=${encodeURIComponent(levelColor)}`);
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        document.getElementById('overlayUrl').textContent = window.location.origin + '/overlay/' + data.overlayId;
+                        document.getElementById('result').style.display = 'block';
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                } catch (error) {
+                    alert('Error creating overlay: ' + error.message);
+                }
+            });
+        </script>
+    </body>
+    </html>
+    
