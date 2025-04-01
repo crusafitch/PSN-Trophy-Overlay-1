@@ -275,21 +275,6 @@
       background: #ff3333;
       transform: scale(1.05);
     }
-    .donate-button {
-            display: inline-block;
-            background: #FF424D;
-            color: white;
-            text-decoration: none;
-            padding: 12px 24px;
-            border-radius: 5px;
-            font-weight: bold;
-            margin-top: 20px;
-            transition: all 0.3s ease;
-        }
-        .donate-button:hover {
-            background: #FF2A37;
-            transform: translateY(-2px);
-        }
   </style>
 </head>
 <body>
@@ -343,7 +328,6 @@
 
   <!-- Test Button -->
   <button id="test-achievement" class="test-button">Test Achievement</button>
-  <a href="#" class="donate-button">Support on Patreon</a>
 
   <script>
     // Store these values in localStorage so they persist across refreshes
@@ -491,17 +475,17 @@
 
 
     let animationInProgress = false;
-
+    
     function showAchievementAnimations(rect) {
       if (animationInProgress) return;
       animationInProgress = true;
-
+      
       console.log("Showing achievement animations");
-
+      
       // Remove any existing animations
       const existingGif = document.getElementById('bar-gif');
       if (existingGif) existingGif.remove();
-
+      
       // Show trophy GIF
       const gif = document.createElement('img');
       gif.src = "/giphy (1).gif";
@@ -517,7 +501,7 @@
         z-index: 1000;
       `;
       document.body.appendChild(gif);
-
+      
       // Show +XP! text
       const xpText = document.createElement('div');
       xpText.textContent = '+XP!';
@@ -536,12 +520,12 @@
       xpText.style.animation = 'xpTextAnim 1.5s ease-out forwards';
       xpText.style.zIndex = '1000';
       document.querySelector('.bottom-bar').appendChild(xpText);
-
+      
       // Create particles
       for (let i = 0; i < 10; i++) {
         createParticle(rect.right, rect.top + rect.height / 2);
       }
-
+      
       setTimeout(() => {
         gif.remove();
         xpText.remove();
