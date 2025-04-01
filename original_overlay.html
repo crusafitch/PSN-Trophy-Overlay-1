@@ -105,8 +105,27 @@
       height: 15px;
       background: var(--progress-color);
       border-radius: 3px;
-      box-shadow: none;
-      animation: none;
+      box-shadow: 
+        0 0 5px var(--progress-color),
+        0 0 10px var(--progress-color),
+        0 0 15px var(--progress-color);
+      animation: glow 1s ease-in-out infinite alternate;
+    }
+    @keyframes glow {
+      from {
+        opacity: 0.7;
+        box-shadow: 
+          0 0 5px var(--progress-color),
+          0 0 10px var(--progress-color),
+          0 0 15px var(--progress-color);
+      }
+      to {
+        opacity: 1;
+        box-shadow: 
+          0 0 10px var(--progress-color),
+          0 0 20px var(--progress-color),
+          0 0 30px var(--progress-color);
+      }
     }
     .mini-progress-fill::after {
       content: '';
