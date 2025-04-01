@@ -28,6 +28,11 @@
       position: fixed;
       bottom: 0;
       left: 0;
+      transition: top 0.3s, bottom 0.3s;
+    }
+    body.position-top .bottom-bar {
+      bottom: auto;
+      top: 0;
     }
     /* LEFT GROUP: Game Info */
     .left-group {
@@ -136,9 +141,15 @@
       height: 200px;
       object-fit: contain;
       position: fixed;
-      bottom: 40px;
       left: 20px;
       z-index: 1000;
+      transition: top 0.3s, bottom 0.3s;
+    }
+    body.position-top #bar-gif {
+      top: 40px;
+    }
+    body.position-bottom #bar-gif {
+      bottom: 40px;
     }
 
     /* Particle effects */
@@ -309,6 +320,19 @@
 
   <!-- Test Button -->
   <button id="test-achievement" class="test-button">Test Achievement</button>
+
+  <select class="overlay-position-select" id="overlayPositionSelect">
+    <option value="bottom">Bottom</option>
+    <option value="top">Top</option>
+  </select>
+
+  <style>
+    .overlay-position-select {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+    }
+  </style>
 
   <script>
     // Store these values in localStorage so they persist across refreshes
@@ -532,6 +556,14 @@
       const progressBar = document.querySelector('.mini-progress-fill');
       const rect = progressBar.getBoundingClientRect();
       showAchievementAnimations(rect);
+    });
+
+    //Initial Overlay Position Handling
+    const overlayPositionSelect = document.getElementById('overlayPositionSelect');
+    overlayPositionSelect.addEventListener('change', () => {
+        const selectedPosition = overlayPositionSelect.value;
+        document.body.classList.remove('position-top', 'position-bottom');
+        document.body.classList.add(`position-${selectedPosition}`);
     });
 
     fetchAllData();
