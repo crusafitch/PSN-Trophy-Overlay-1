@@ -165,11 +165,11 @@
       position: absolute;
       width: 12px;
       height: 12px;
-      background: #ff3333;
+      background: var(--progress, var(--progress-color));
       border-radius: 50%;
       pointer-events: none;
       z-index: 1000;
-      box-shadow: 0 0 15px #ff3333;
+      box-shadow: 0 0 15px var(--progress, var(--progress-color));
       opacity: 0.9;
     }
 
@@ -475,17 +475,17 @@
 
 
     let animationInProgress = false;
-    
+
     function showAchievementAnimations(rect) {
       if (animationInProgress) return;
       animationInProgress = true;
-      
+
       console.log("Showing achievement animations");
-      
+
       // Remove any existing animations
       const existingGif = document.getElementById('bar-gif');
       if (existingGif) existingGif.remove();
-      
+
       // Show trophy GIF
       const gif = document.createElement('img');
       gif.src = "/giphy (1).gif";
@@ -501,7 +501,7 @@
         z-index: 1000;
       `;
       document.body.appendChild(gif);
-      
+
       // Show +XP! text
       const xpText = document.createElement('div');
       xpText.textContent = '+XP!';
@@ -520,12 +520,12 @@
       xpText.style.animation = 'xpTextAnim 1.5s ease-out forwards';
       xpText.style.zIndex = '1000';
       document.querySelector('.bottom-bar').appendChild(xpText);
-      
+
       // Create particles
       for (let i = 0; i < 10; i++) {
         createParticle(rect.right, rect.top + rect.height / 2);
       }
-      
+
       setTimeout(() => {
         gif.remove();
         xpText.remove();
