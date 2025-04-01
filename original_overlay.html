@@ -87,11 +87,11 @@
     }
     .mini-progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #580000, #8B0000);
+      background: linear-gradient(90deg, var(--progress-color), var(--progress-color));
       width: 0%;
       border-radius: 3px;
       transition: width 0.5s ease;
-      box-shadow: 0 0 5px rgba(139, 0, 0, 0.5);
+      box-shadow: 0 0 5px var(--progress-color);
       position: relative;
       overflow: visible;
     }
@@ -103,12 +103,12 @@
       transform: translateY(-50%);
       width: 6px;
       height: 15px;
-      background: #ff3333;
+      background: var(--progress-color);
       border-radius: 3px;
       box-shadow: 
-        0 0 5px #ff3333,
-        0 0 10px #ff3333,
-        0 0 15px #ff3333;
+        0 0 5px var(--progress-color),
+        0 0 10px var(--progress-color),
+        0 0 15px var(--progress-color);
       animation: glow 1s ease-in-out infinite alternate;
     }
     @keyframes glow {
@@ -245,9 +245,9 @@
       margin-left: 85px;
       padding: 4px 8px;
       background: linear-gradient(45deg, #2a2a2a, #4a4a4a);
-      border: 2px solid #8B0000;
+      border: 2px solid var(--progress-color);
       border-radius: 12px;
-      box-shadow: 0 0 10px rgba(139, 0, 0, 0.3);
+      box-shadow: 0 0 10px var(--progress-color, rgba(139, 0, 0, 0.3));
       font-family: 'Press Start 2P', monospace;
       font-size: 14px;
     }
@@ -262,7 +262,7 @@
       top: 10px;
       left: 10px;
       padding: 8px 16px;
-      background: #8B0000;
+      background: var(--progress-color, #8B0000);
       color: white;
       border: none;
       border-radius: 4px;
